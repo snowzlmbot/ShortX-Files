@@ -64,7 +64,7 @@
           "id": "A-ai-switch-input"
         },
         {
-          "@type": "type.googleapis.com/ExecuteMVEL",
+          "@type": "type.googleapis.com/shortx.ExecuteMVEL",
           "expression": "String cfg = {textFieldInput1};\nString[] p = cfg.split(\"\\\\|\");\nif (p.length < 5) { return \"格式错误，请使用 provider|model|protocol|endpoint|keyVariable\"; }\nString provider = p[0].trim(); String model = p[1].trim(); String protocol = p[2].trim(); String endpoint = p[3].trim(); String keyVar = p[4].trim();\nif (!(protocol == \"openai_responses\" || protocol == \"openai_chat\" || protocol == \"anthropic_messages\")) { return \"协议无效\"; }\nshortx.writeGlobalVar(\"shortx_ai_provider\", provider);\nshortx.writeGlobalVar(\"shortx_ai_model\", model);\nshortx.writeGlobalVar(\"shortx_ai_protocol\", protocol);\nshortx.writeGlobalVar(\"shortx_ai_base_url\", endpoint);\nshortx.writeGlobalVar(\"shortx_ai_key_variable\", keyVar);\nshortx.writeGlobalVar(\"shortx_ai_enabled_count\", \"1\");\nreturn keyVar;",
           "context": "CoroutineContext_Default",
           "customContextDataKey": {
@@ -161,27 +161,18 @@
       "_ifCondOpPayload": {},
       "_ifActions": [
         {
-          "@type": "type.googleapis.com/shortx.ShowTextFieldDialog",
-          "title": "进入历史会话",
-          "message": "会话记录只从 ShortX 本机私有全局变量读取。输入 resume 继续当前历史。",
-          "cancelable": true,
-          "textFields": [
-            {
-              "label": "会话标签",
-              "placeholder": "resume",
-              "isRequired": "true",
-              "value": "resume"
-            }
-          ],
-          "style": {},
+          "@type": "type.googleapis.com/shortx.ShowPPN",
+          "tag": "shortx_ai_history",
+          "title": "本机历史会话上下文",
+          "message": "globalVarOf$shortx_ai_history",
+          "icon": "history",
+          "vibrate": false,
+          "sound": false,
+          "clickAction": [],
+          "button": [],
+          "displayTimeSeconds": 12,
           "customContextDataKey": {},
-          "id": "A-ai-history-input"
-        },
-        {
-          "@type": "type.googleapis.com/shortx.ShowToast",
-          "message": "已载入本机历史上下文；下一次选择开始/继续会话即可继续微调",
-          "customContextDataKey": {},
-          "id": "A-ai-history-toast"
+          "id": "A-ai-history-show"
         }
       ],
       "_elseActions": [],

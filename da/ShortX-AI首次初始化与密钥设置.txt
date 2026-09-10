@@ -3,14 +3,14 @@
     {
       "@type": "type.googleapis.com/NoAction",
       "icon": "chat-2-line",
-      "note": "ShortX AI 首次初始化：创建服务商独立隐私全局变量、当前唯一启用配置和本机私有会话/skills 目录参数。",
+      "note": "AI 会话初始化/模型切换入口；API Key 只写入 ShortX 隐私全局变量。",
       "id": "A-ai-init-header"
     },
     {
       "@type": "type.googleapis.com/ShowAlertDialog",
       "title": "ShortX AI 首次初始化",
-      "message": "首次运行将创建多个服务商对应的隐私全局变量。只填写你要启用的一个服务商；其他 Key 保持未设置。首次使用还需要把 GitHub skills 目录保存到 ShortX 私有目录，并将该目录路径写入配置。",
-      "positive": "继续初始化",
+      "message": "将创建每个服务商独立的隐私全局变量，并只启用一个服务商/模型。首次使用需要填写 API Key 和 ShortX 私有 skills 目录。规则不将 Key 写入普通全局变量、历史或导出文件。",
+      "positive": "继续",
       "onPositive": [],
       "negative": "取消",
       "onNegative": [],
@@ -24,10 +24,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_openai",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -37,10 +34,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_anthropic",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -50,10 +44,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_google",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -63,10 +54,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_xai",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -76,10 +64,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_deepseek",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -89,10 +74,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_mistral",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -102,10 +84,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_groq",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -115,10 +94,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_together",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -128,10 +104,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_openrouter",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -141,10 +114,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_key_gemini",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -154,10 +124,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_ai_history",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -167,10 +134,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_ai_session_store",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -180,10 +144,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_ai_pending_prompt",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -193,10 +154,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_ai_response_text",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        }
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""}
       },
       "customContextDataKey": {},
       "id": "A-ai-create-response"
@@ -205,10 +163,7 @@
       "@type": "type.googleapis.com/shortx.CreateGlobalVar",
       "globalVar": {
         "name": "shortx_ai_raw_response",
-        "type": {
-          "@type": "type.googleapis.com/shortx.StringVar",
-          "value": ""
-        },
+        "type": {"@type": "type.googleapis.com/shortx.StringVar", "value": ""},
         "isSecret": true
       },
       "customContextDataKey": {},
@@ -217,7 +172,7 @@
     {
       "@type": "type.googleapis.com/shortx.ShowTextFieldDialog",
       "title": "输入启用配置与私有目录",
-      "message": "第一个输入框：provider|model|protocol|完整请求URL|keyVariable\n第二个输入框：ShortX 私有 skills 目录路径（首次请先从 https://github.com/snowzlmbot/ShortX-Files/tree/main/skills 下载并保存）\n只启用一个配置；协议支持 openai_responses、openai_chat、anthropic_messages。",
+      "message": "第一个输入框：provider|model|protocol|完整请求URL|keyVariable\n第二个输入框：ShortX 私有 skills 目录路径。首次请下载并解压 https://github.com/snowzlmbot/ShortX-Files/tree/main/skills 到该目录。",
       "cancelable": true,
       "textFields": [
         {
@@ -228,7 +183,7 @@
         },
         {
           "label": "ShortX 私有 skills 目录",
-          "placeholder": "例如：/data/user/0/com.x8bit.bitwarden/files/shortx-ai-skills",
+          "placeholder": "例如：/data/user/0/<shortx-package>/files/shortx-ai-skills",
           "isRequired": "true",
           "value": ""
         }
@@ -263,7 +218,7 @@
     },
     {
       "@type": "type.googleapis.com/shortx.ExecuteMVEL",
-      "expression": "String keyVar = shortx.readGlobalVar(\"shortx_ai_key_variable\");\nshortx.writeGlobalVar(keyVar, {textFieldInput1});\nshortx.writeGlobalVar(\"shortx_ai_api_key\", {textFieldInput1});\nreturn \"ok\";",
+      "expression": "String keyVar = shortx.readGlobalVar(\"shortx_ai_key_variable\");\nshortx.writeGlobalVar(keyVar, {textFieldInput1});\nreturn \"ok\";",
       "context": "CoroutineContext_Default",
       "customContextDataKey": {},
       "id": "A-ai-init-key-save"
@@ -272,124 +227,53 @@
       "@type": "type.googleapis.com/shortx.DownloadFile",
       "subject": {
         "title": "下载 ShortX skills",
-        "description": "首次获取 shortx-rule-creator 及 references；请确认 ShortX 的下载动作支持保存到应用私有目录。",
+        "description": "首次获取 shortx-rule-creator 及 references；下载后请解压到配置的 ShortX 私有 skills 目录。",
         "url": "https://github.com/snowzlmbot/ShortX-Files/archive/refs/heads/main.zip",
         "fileName": "shortx-files-main.zip"
       },
       "id": "A-ai-download-skills"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.ShowToast",
+      "message": "初始化完成：请确认 ZIP 已解压到私有 skills 目录，然后导入并启用会话 Rule。",
+      "customContextDataKey": {},
+      "id": "A-ai-init-done"
     }
   ],
   "id": "DA-shortx-ai-init-001",
   "lastUpdateTime": "0",
   "createTime": "0",
-  "author": {
-    "name": "snowzlmbot"
-  },
+  "author": {"name": "snowzlmbot"},
   "title": "ShortX AI 首次初始化与密钥设置",
-  "description": "首次创建 ShortX AI 本机私有配置、各供应商独立隐私全局变量和会话存储变量；默认只启用 OpenAI/gpt-5。首次使用请将 skills 目录保存到 ShortX 私有目录并填写路径。",
-  "versionCode": "2",
+  "description": "首次创建 ShortX AI 本机私有配置、各供应商独立隐私全局变量和会话存储变量；默认只启用 OpenAI/gpt-5，并下载 skills 压缩包到本机私有目录。",
+  "versionCode": "3",
   "hook": {
     "actionsOnDeleted": [
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_history"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_session_store"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_pending_prompt"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_response_text"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_raw_response"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_provider"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_model"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_protocol"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_base_url"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_key_variable"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_enabled_count"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_skills_dir"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_skills_source"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_skills_loaded"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_ai_api_key"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_openai"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_anthropic"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_google"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_xai"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_deepseek"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_mistral"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_groq"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_together"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_openrouter"
-      },
-      {
-        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
-        "varName": "shortx_key_gemini"
-      }
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_history"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_session_store"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_pending_prompt"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_response_text"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_raw_response"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_provider"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_model"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_protocol"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_base_url"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_key_variable"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_enabled_count"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_skills_dir"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_skills_source"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_skills_loaded"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_ai_api_key"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_openai"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_anthropic"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_google"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_xai"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_deepseek"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_mistral"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_groq"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_together"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_openrouter"},
+      {"@type": "type.googleapis.com/shortx.DeleteGlobalVar", "varName": "shortx_key_gemini"}
     ]
   },
   "quit": {},
