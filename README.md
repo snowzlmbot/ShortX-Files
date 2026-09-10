@@ -68,7 +68,12 @@
 2. 给一些动作添加备注
 
 
-## Fork github 仓库
+## Agent Skill
+
+The portable ShortX rule-creation skill is in [`skills/shortx-rule-creator/`](skills/shortx-rule-creator/).
+See [`skills/README.md`](skills/README.md) for the cross-agent layout, source
+provenance, safety boundaries, and local installation instructions.
+
 
 如果你想直接Fork本仓库使用，需要简单配置一下Github Action需要的`token`，否则无法自动创建Index更新的PR。步骤如下：
 
