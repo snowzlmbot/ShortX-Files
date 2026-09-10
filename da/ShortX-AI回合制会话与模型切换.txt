@@ -1,0 +1,364 @@
+{
+  "actions": [
+    {
+      "@type": "type.googleapis.com/NoAction",
+      "icon": "chat-2-line",
+      "note": "AI 会话入口；首次运行初始化本机私有配置与服务商密钥变量。",
+      "id": "A-ai-menu-header"
+    },
+    {
+      "@type": "type.googleapis.com/ShowListDialog",
+      "title": "ShortX AI",
+      "message": "选择操作。只允许一个模型服务商启用；其他服务商密钥变量保持禁用/未填。",
+      "cancelable": true,
+      "data": "开始/继续会话|chat,切换服务商/模型（唯一启用）|switch,新建会话|new,从历史会话进入|history,查看当前配置|status",
+      "isMultipleChoice": false,
+      "delimiter": [","],
+      "needConfirmAction": true,
+      "dataType": 0,
+      "style": {},
+      "customContextDataKey": {},
+      "id": "A-ai-menu"
+    },
+    {
+      "@type": "type.googleapis.com/ExecuteMVEL",
+      "expression": "String choice = {selectedListItem};\nif (choice == null) { return \"cancel\"; }\nif (choice.contains(\"|\")) { return choice.substring(choice.lastIndexOf(\"|\") + 1); }\nreturn choice;",
+      "context": "CoroutineContext_Default",
+      "customContextDataKey": {
+        "keys": [
+          {
+            "first": "mvelRet",
+            "second": "shortx_ai_menu_choice"
+          }
+        ]
+      },
+      "id": "A-ai-choice"
+    },
+    {
+      "@type": "type.googleapis.com/IfThenElse",
+      "_if": [
+        {
+          "@type": "type.googleapis.com/MatchMVEL",
+          "expression": "{selectedListItem} != null && {selectedListItem}.contains('switch')",
+          "id": "C-ai-switch"
+        }
+      ],
+      "_ifCondOp": "ALL",
+      "_ifCondOpPayload": {},
+      "_ifActions": [
+        {
+          "@type": "type.googleapis.com/ShowTextFieldDialog",
+          "title": "切换唯一启用的服务商/模型",
+          "message": "输入：provider|model|protocol|完整请求URL|keyVariableName\nprotocol：openai_responses / openai_chat / anthropic_messages\n例如：OpenAI|gpt-5|openai_responses|https://api.openai.com/v1/responses|shortx_key_openai\n只会激活这一项；API Key 请在下一步输入，不写入规则文件。",
+          "cancelable": true,
+          "textFields": [
+            {
+              "label": "provider|model|protocol|endpoint|keyVariable",
+              "placeholder": "OpenAI|gpt-5|openai_responses|https://api.openai.com/v1/responses|shortx_key_openai",
+              "isRequired": "true",
+              "value": ""
+            }
+          ],
+          "style": {},
+          "customContextDataKey": {},
+          "id": "A-ai-switch-input"
+        },
+        {
+          "@type": "type.googleapis.com/ExecuteMVEL",
+          "expression": "String cfg = {textFieldInput1};\nString[] p = cfg.split(\"\\\\|\");\nif (p.length < 5) { return \"格式错误，请使用 provider|model|protocol|endpoint|keyVariable\"; }\nString provider = p[0].trim(); String model = p[1].trim(); String protocol = p[2].trim(); String endpoint = p[3].trim(); String keyVar = p[4].trim();\nif (!(protocol == \"openai_responses\" || protocol == \"openai_chat\" || protocol == \"anthropic_messages\")) { return \"协议无效\"; }\nshortx.writeGlobalVar(\"shortx_ai_provider\", provider);\nshortx.writeGlobalVar(\"shortx_ai_model\", model);\nshortx.writeGlobalVar(\"shortx_ai_protocol\", protocol);\nshortx.writeGlobalVar(\"shortx_ai_base_url\", endpoint);\nshortx.writeGlobalVar(\"shortx_ai_key_variable\", keyVar);\nshortx.writeGlobalVar(\"shortx_ai_enabled_count\", \"1\");\nreturn keyVar;",
+          "context": "CoroutineContext_Default",
+          "customContextDataKey": {
+            "keys": [
+              {
+                "first": "mvelRet",
+                "second": "shortx_ai_selected_key_variable"
+              }
+            ]
+          },
+          "id": "A-ai-switch-parse"
+        },
+        {
+          "@type": "type.googleapis.com/shortx.ShowTextFieldDialog",
+          "title": "输入当前服务商 API Key",
+          "message": "该值仅写入你指定的 ShortX 隐私全局变量。请勿发送给 AI 或写入导出的规则文件。",
+          "cancelable": true,
+          "textFields": [
+            {
+              "label": "API Key",
+              "placeholder": "粘贴当前服务商 Key",
+              "isRequired": "true",
+              "value": ""
+            }
+          ],
+          "style": {},
+          "customContextDataKey": {},
+          "id": "A-ai-switch-key-input"
+        },
+        {
+          "@type": "type.googleapis.com/shortx.ExecuteMVEL",
+          "expression": "String keyVar = shortx.readGlobalVar(\"shortx_ai_key_variable\");\nshortx.writeGlobalVar(keyVar, {textFieldInput1});\nshortx.writeGlobalVar(\"shortx_ai_api_key\", {textFieldInput1});\nreturn \"已保存\";",
+          "context": "CoroutineContext_Default",
+          "customContextDataKey": {},
+          "id": "A-ai-switch-key-save"
+        },
+        {
+          "@type": "type.googleapis.com/shortx.ShowToast",
+          "message": "已切换为唯一启用配置：globalVarOf$shortx_ai_provider / globalVarOf$shortx_ai_model",
+          "customContextDataKey": {},
+          "id": "A-ai-switch-done"
+        }
+      ],
+      "_elseActions": [],
+      "_ifActionAsyncMode": "ActionAsyncMode_Sync",
+      "_elseActionAsyncMode": "ActionAsyncMode_Sync",
+      "customContextDataKey": {},
+      "id": "A-ai-switch-branch"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.IfThenElse",
+      "_if": [
+        {
+          "@type": "type.googleapis.com/shortx.MatchMVEL",
+          "expression": "{selectedListItem} != null && {selectedListItem}.contains('new')",
+          "id": "C-ai-new"
+        }
+      ],
+      "_ifCondOp": "ALL",
+      "_ifCondOpPayload": {},
+      "_ifActions": [
+        {
+          "@type": "type.googleapis.com/shortx.WriteGlobalVar",
+          "varName": "shortx_ai_history",
+          "valueAsString": "",
+          "op": "WriteGlobalVarOp_Override",
+          "autoCreateIfMissing": true,
+          "customContextDataKey": {},
+          "id": "A-ai-new-clear"
+        },
+        {
+          "@type": "type.googleapis.com/shortx.ShowToast",
+          "message": "已新建会话",
+          "customContextDataKey": {},
+          "id": "A-ai-new-toast"
+        }
+      ],
+      "_elseActions": [],
+      "_ifActionAsyncMode": "ActionAsyncMode_Sync",
+      "_elseActionAsyncMode": "ActionAsyncMode_Sync",
+      "customContextDataKey": {},
+      "id": "A-ai-new-branch"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.IfThenElse",
+      "_if": [
+        {
+          "@type": "type.googleapis.com/shortx.MatchMVEL",
+          "expression": "{selectedListItem} != null && {selectedListItem}.contains('history')",
+          "id": "C-ai-history"
+        }
+      ],
+      "_ifCondOp": "ALL",
+      "_ifCondOpPayload": {},
+      "_ifActions": [
+        {
+          "@type": "type.googleapis.com/shortx.ShowTextFieldDialog",
+          "title": "进入历史会话",
+          "message": "会话记录只从 ShortX 本机私有全局变量读取。输入 resume 继续当前历史。",
+          "cancelable": true,
+          "textFields": [
+            {
+              "label": "会话标签",
+              "placeholder": "resume",
+              "isRequired": "true",
+              "value": "resume"
+            }
+          ],
+          "style": {},
+          "customContextDataKey": {},
+          "id": "A-ai-history-input"
+        },
+        {
+          "@type": "type.googleapis.com/shortx.ShowToast",
+          "message": "已载入本机历史上下文；下一次选择开始/继续会话即可继续微调",
+          "customContextDataKey": {},
+          "id": "A-ai-history-toast"
+        }
+      ],
+      "_elseActions": [],
+      "_ifActionAsyncMode": "ActionAsyncMode_Sync",
+      "_elseActionAsyncMode": "ActionAsyncMode_Sync",
+      "customContextDataKey": {},
+      "id": "A-ai-history-branch"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.IfThenElse",
+      "_if": [
+        {
+          "@type": "type.googleapis.com/shortx.MatchMVEL",
+          "expression": "{selectedListItem} != null && {selectedListItem}.contains('status')",
+          "id": "C-ai-status"
+        }
+      ],
+      "_ifCondOp": "ALL",
+      "_ifCondOpPayload": {},
+      "_ifActions": [
+        {
+          "@type": "type.googleapis.com/shortx.ShowPPN",
+          "tag": "shortx_ai_status",
+          "title": "ShortX AI 当前配置",
+          "message": "服务商：globalVarOf$shortx_ai_provider\n模型：globalVarOf$shortx_ai_model\n协议：globalVarOf$shortx_ai_protocol\n端点：globalVarOf$shortx_ai_base_url\n唯一启用数：globalVarOf$shortx_ai_enabled_count\nKey 变量：globalVarOf$shortx_ai_key_variable",
+          "icon": "info",
+          "vibrate": false,
+          "sound": false,
+          "clickAction": [],
+          "button": [],
+          "displayTimeSeconds": 12,
+          "customContextDataKey": {},
+          "id": "A-ai-status"
+        }
+      ],
+      "_elseActions": [],
+      "_ifActionAsyncMode": "ActionAsyncMode_Sync",
+      "_elseActionAsyncMode": "ActionAsyncMode_Sync",
+      "customContextDataKey": {},
+      "id": "A-ai-status-branch"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.ShowTextFieldDialog",
+      "title": "ShortX AI 回合制会话",
+      "message": "输入本回合消息。会话历史会在本机保存为 ShortX 隐私全局变量；再次运行即可继续微调。命令：/new 或 /reset 新会话；/history 查看当前历史上下文。",
+      "cancelable": true,
+      "textFields": [
+        {
+          "label": "消息",
+          "placeholder": "例如：继续上一个结果，改成 JSON，并只保留必要字段",
+          "isRequired": "true",
+          "value": ""
+        }
+      ],
+      "style": {},
+      "customContextDataKey": {},
+      "id": "A-ai-message-input"
+    },
+    {
+      "@type": "type.googleapis.com/shortx.ExecuteMVEL",
+      "expression": "String msg = {textFieldInput1};\nif (msg == null) { return \"已取消\"; }\nif (msg.trim() == \"/reset\" || msg.trim() == \"/new\") { shortx.writeGlobalVar(\"shortx_ai_history\", \"\"); return \"会话已重置\"; }\nString history = shortx.readGlobalVar(\"shortx_ai_history\");\nString system = \"你是 ShortX AI 回合制会话助手。必须遵守从 https://github.com/snowzlmbot/ShortX-Files/tree/main/skills 获取的 shortx-rule-creator/SKILL.md 及其 references：按用户目标生成可见、可审计、可导入的 ShortX DirectAction/Rule；使用文档中的 @type、字段和枚举；保持 ###------### 分隔符；不执行生成的 Shell、JavaScript、MVEL、网络或 Android 动作；不得索要、输出或记录 API Key、密码、Cookie、token；涉及删除、发送、上传、录音录像、权限、注入输入或特权命令时先说明风险；信息不足先问一个关键问题；继续修改时基于历史上下文。\";\nString prompt = system + \"\\n服务商：\" + shortx.readGlobalVar(\"shortx_ai_provider\") + \"\\n模型：\" + shortx.readGlobalVar(\"shortx_ai_model\") + \"\\n协议：\" + shortx.readGlobalVar(\"shortx_ai_protocol\") + \"\\n端点：\" + shortx.readGlobalVar(\"shortx_ai_base_url\") + \"\\n历史：\" + history + \"\\n本回合：\" + msg;\nshortx.writeGlobalVar(\"shortx_ai_pending_prompt\", prompt);\nreturn prompt;",
+      "context": "CoroutineContext_Default",
+      "customContextDataKey": {},
+      "id": "A-ai-prompt"
+    }
+  ],
+  "id": "DA-shortx-ai-chat-switch-001",
+  "lastUpdateTime": "0",
+  "createTime": "0",
+  "author": {
+    "name": "snowzlmbot"
+  },
+  "title": "ShortX AI 回合制会话与模型切换",
+  "description": "一键配置唯一启用的 AI 服务商/模型、创建新会话、进入本机历史会话并输入回合消息。API Key 使用用户指定的 ShortX 隐私全局变量保存。",
+  "versionCode": "3",
+  "hook": {
+    "actionsOnDeleted": [
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_history"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_pending_prompt"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_response_text"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_raw_response"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_provider"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_model"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_protocol"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_base_url"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_key_variable"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_enabled_count"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_skills_dir"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_skills_loaded"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_session_store"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_openai"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_anthropic"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_google"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_xai"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_deepseek"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_mistral"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_groq"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_together"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_openrouter"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_key_gemini"
+      },
+      {
+        "@type": "type.googleapis.com/shortx.DeleteGlobalVar",
+        "varName": "shortx_ai_api_key"
+      }
+    ]
+  },
+  "quit": {},
+  "parameters": []
+}
+###------###
+{"type":"da"}

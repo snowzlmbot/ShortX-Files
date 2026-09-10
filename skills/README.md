@@ -75,6 +75,21 @@ supported project skill directory (for example `.agents/skills/`) and follow
 that agent's trust or enablement step. A loader that caches skills may require
 a new agent session before the skill is available in prompts.
 
+## ShortX AI instructions
+
+The AI-specific import files are documented in [`AI-SHORTX-使用说明.md`](../AI-SHORTX-使用说明.md):
+
+- `da/ShortX-AI首次初始化与密钥设置.txt`
+- `da/ShortX-AI回合制会话与模型切换.txt`
+- `rule/ShortX-AI回合制会话自动指令.txt`
+
+The package supports a single active provider/model configuration, provider-specific
+secret global variables, round-based text interaction, and the documented OpenAI
+Responses, OpenAI-compatible Chat, and Anthropic Messages request branches. The
+README also records the capabilities that ShortX's published action schema does not
+currently expose, including true streaming, recursive skills-directory fetching,
+and application-layer encryption.
+
 ## Scope
 
 This skill validates the structure of generated files. It does not prove that
