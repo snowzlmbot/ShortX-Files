@@ -4,6 +4,8 @@
 
 [![Update index](https://github.com/ShortX-Repo/ShortX-Files/actions/workflows/update_index.yml/badge.svg)](https://github.com/ShortX-Repo/ShortX-Files/actions/workflows/update_index.yml)
 
+[更新日志](CHANGELOG.md)
+
 
 ## 如何贡献
 
