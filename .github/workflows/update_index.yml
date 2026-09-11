@@ -14,43 +14,43 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v4
-      with:
-        persist-credentials: false
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v5
-      with:
-        java-version: "21"
-        distribution: temurin
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: "21"
+          distribution: temurin
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      working-directory: tools/AutoGen
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: tools/AutoGen
 
-    - name: Generate index
-      uses: gradle/actions/setup-gradle@v4
-      with:
-        cache-disabled: true
+      - name: Generate index
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-disabled: true
 
-    - name: Run index generator
-      run: ./gradlew --no-daemon run -PGPR_USER="${{ secrets.GPR_USER }}" -PGPR_API_KEY="${{ secrets.GPR_API_KEY }}" --args="../../"
-      working-directory: tools/AutoGen
+      - name: Run index generator
+        run: ./gradlew --no-daemon run -PGPR_USER="${{ secrets.GPR_USER }}" -PGPR_API_KEY="${{ secrets.GPR_API_KEY }}" --args="../../"
+        working-directory: tools/AutoGen
 
-    - name: Create Pull Request
-      id: cpr
-      uses: peter-evans/create-pull-request@v7
-      with:
-        token: "${{ secrets.PAT }}"
-        commit-message: "Update index"
-        committer: "GitHub <noreply@github.com>"
-        author: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-        signoff: false
-        delete-branch: true
-        title: "[Index] Update index"
-        body: |
-          Update index
-          - Updated with latest files
-        assignees: tornaco
-        draft: false
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: "${{ secrets.PAT }}"
+          commit-message: "Update index"
+          committer: "GitHub <noreply@github.com>"
+          author: "${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+          signoff: false
+          delete-branch: true
+          title: "[Index] Update index"
+          body: |
+            Update index
+            - Updated with latest files
+          assignees: tornaco
+          draft: false

@@ -1,0 +1,40 @@
+name: Package skills
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "skills/**"
+      - "!skills/shortx-rule-creator.zip"
+      - "tools/AutoGen/scripts/build_skill_zip.py"
+      - ".github/workflows/package_skills.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build deterministic skill archive
+        run: python3 tools/AutoGen/scripts/build_skill_zip.py
+
+      - name: Verify archive
+        run: |
+          unzip -tq skills/shortx-rule-creator.zip
+          test "$(unzip -Z1 skills/shortx-rule-creator.zip | grep -c '^shortx-rule-creator/')" -ge 7
+          unzip -Z1 skills/shortx-rule-creator.zip | grep -qx 'shortx-rule-creator/SKILL.md'
+
+      - name: Commit archive
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: skills/shortx-rule-creator.zip
+          commit_message: "chore: package ShortX skill"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
