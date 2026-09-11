@@ -53,5 +53,4 @@ jobs:
           Update index
           - Updated with latest files
         assignees: tornaco
-        reviewers: tornaco
         draft: false
