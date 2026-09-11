@@ -292,10 +292,10 @@
         "_ifActions": [
           {
             "@type": "type.googleapis.com/ShellCommand",
-            "command": "set -eu\nURL=\"https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip\"\nARCHIVE=\"globalVarOf$shortx_ai_skills_archive\"\nTARGET_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 2 ;; esac\ncase \"$TARGET_ROOT\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 4 ;; esac\ncommand -v curl >/dev/null 2>&1 || exit 127\ncommand -v unzip >/dev/null 2>&1 || exit 127\nmkdir -p \"$TARGET_ROOT\"\ncurl --fail --location --silent --show-error --retry 2 --connect-timeout 15 \"$URL\" --output \"$ARCHIVE\"\nSTAGE=\"$TARGET_ROOT.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -Z1 \"$ARCHIVE\" | while IFS= read -r entry; do case \"$entry\" in shortx-rule-creator/*) ;; *) exit 3 ;; esac; case \"$entry\" in /*|*../*) exit 3 ;; esac; done\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/shortx-rule-creator/SKILL.md\"\ntest -d \"$STAGE/shortx-rule-creator/references\"\nrm -rf \"$TARGET_ROOT/shortx-rule-creator\"\nmv \"$STAGE/shortx-rule-creator\" \"$TARGET_ROOT/shortx-rule-creator\"\nrm -rf \"$STAGE\"",
+            "command": "set -eu\nURL=\"https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip\"\nARCHIVE=\"globalVarOf$shortx_ai_skills_archive\"\nTARGET_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 2 ;; esac\ncase \"$TARGET_ROOT\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 4 ;; esac\ncommand -v curl >/dev/null 2>&1 || exit 127\ncommand -v unzip >/dev/null 2>&1 || exit 127\nmkdir -p \"$TARGET_ROOT\"\ncurl --fail --location --silent --show-error --retry 2 --connect-timeout 15 \"$URL\" --output \"$ARCHIVE\"\nSTAGE=\"$TARGET_ROOT.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -Z1 \"$ARCHIVE\" | while IFS= read -r entry; do\n  case \"$entry\" in shortx-rule-creator/*) ;; *) exit 3 ;; esac\n  case \"$entry\" in /*|*../*) exit 3 ;; esac\ndone\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/shortx-rule-creator/SKILL.md\"\ntest -d \"$STAGE/shortx-rule-creator/references\"\nrm -rf \"$TARGET_ROOT/shortx-rule-creator\"\nmv \"$STAGE/shortx-rule-creator\" \"$TARGET_ROOT/shortx-rule-creator\"\nrm -rf \"$STAGE\"",
             "singleShot": true,
             "actionOnError": "Break",
-            "id": "A-ai-download-and-unzip-skills"
+            "id": "A-ai-skills-curl-unzip"
           },
           {
             "@type": "type.googleapis.com/ShowToast",
@@ -403,12 +403,20 @@
       {
         "@type": "type.googleapis.com/DeleteGlobalVar",
         "varName": "shortx_ai_api_key"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_key_custom"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_skills_archive"
       }
     ]
   },
   "quit": {},
   "parameters": [],
-  "versionCode": "7"
+  "versionCode": "8"
 }
 ###------###
 {"type":"rule"}

@@ -408,68 +408,9 @@
     "name": "snowzlmbot"
   },
   "title": "ShortX AI 首次初始化与密钥设置",
-  "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认，设置唯一启用模型，下载并解压 skills 压缩包。",
-  "versionCode": "7",
-  "hook": {
-    "actionsOnStop": [
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_key_custom"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_provider"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_model"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_protocol"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_base_url"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_key_variable"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_enabled_count"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_skills_dir"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_skills_archive"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_skills_loaded"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_history"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_pending_prompt"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_response_text"
-      },
-      {
-        "@type": "type.googleapis.com/DeleteGlobalVar",
-        "varName": "shortx_ai_session_store"
-      }
-    ]
-  },
+  "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认；支持自定义服务商、模型、协议、完整端点与 Key 变量，使用 curl 下载并解压 skills 压缩包。",
+  "versionCode": "8",
+  "hook": {},
   "quit": {},
   "parameters": []
 }
