@@ -20,10 +20,10 @@
    provider|model|protocol|完整请求URL|keyVariableName|skills私有目录
    ```
 
-   默认示例：
+   默认自定义服务商示例：
 
    ```text
-   OpenAI|gpt-5|openai_responses|https://api.openai.com/v1/responses|shortx_key_openai|/data/data/com.shortx/files/skills
+   Custom|your-model|openai_responses|https://your-provider.example/v1/responses|shortx_key_custom|/data/data/com.shortx/files/skills
    ```
 
 3. 输入当前服务商 API Key。Key 只写入对应的 ShortX 隐私全局变量。
@@ -31,7 +31,7 @@
 
    `https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip`
 
-5. 初始化指令随后使用受限 `ShellCommand` 调用设备的 `unzip`，自动解压到填写的 ShortX 私有目录；不再需要手动解压。
+5. 初始化指令随后使用受限 `ShellCommand` 调用设备的 `curl` 下载固定 ZIP，再用系统 `unzip` 自动解压到填写的 ShortX 私有目录；不再需要手动解压。
 
    目标目录结构：
 
@@ -51,9 +51,7 @@
 skills/shortx-rule-creator.zip
 ```
 
-压缩包内容为 `skills/shortx-rule-creator/` 及其全部 references，初始化动作会检查目标目录并替换旧版本目录。压缩包不包含脚本、密钥或符号链接。
-
-### skills/shortx-rule-creator.zip
+压缩包内容为 `shortx-rule-creator/SKILL.md` 和 `shortx-rule-creator/references/`，初始化会将其解压到 `<skills私有目录>/shortx-rule-creator/`。压缩包不包含脚本、密钥或符号链接。
 
 压缩包由 GitHub Actions 从 `skills/shortx-rule-creator/` 自动生成，固定下载地址为：
 
@@ -73,7 +71,7 @@ https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rul
 shortx_ai_enabled_count = 1
 ```
 
-未使用的 Key 保持空值，也不会进入 HTTP 请求。
+未使用的 Key 保持空值，也不会进入 HTTP 请求。默认配置不预置真实服务商 Key；要使用自定义服务商，填写 `provider|model|protocol|完整请求URL|shortx_key_custom|skills私有目录`，端点和 Key 都写入隐私全局变量。
 
 ## 回合制会话
 
@@ -89,7 +87,7 @@ shortx_ai_enabled_count = 1
 
 ## 重要限制
 
-- `unzip` 必须存在于 Android 设备环境中；如果设备没有该命令，初始化会在解压动作处失败并显示错误。压缩包会解压为 `目标目录/shortx-rule-creator/SKILL.md` 与 `目标目录/shortx-rule-creator/references/`，规则不会执行 ZIP 内脚本。
+- `curl` 和 `unzip` 必须存在于 Android 设备环境中；如果设备缺少任一命令，初始化会在下载或解压动作处失败。下载内容必须是固定 Raw ZIP 地址，解压会校验 `shortx-rule-creator/SKILL.md` 与 references，规则不会执行 ZIP 内脚本。
 - `WriteGlobalVar` 的 `autoCreateIfMissing` 不是当前 ShortX `core-api.jar` 支持的字段；写入前应通过 `CreateGlobalVar` 创建变量，或删除该字段。
 - ShortX 的 `HttpRequest` 参考只描述普通 HTTP 响应适配，没有 SSE/HTTP chunk 的流式输出动作。因此当前实现是“提交一回合、等待完整响应、显示完整回复”，不是 token 级流式输出。
 - 当前会话历史保存在 ShortX 隐私全局变量中。规则没有可验证的 AES/Android Keystore 加密 API，因此不能声称已经实现密码学加密。

@@ -119,12 +119,22 @@
     {
       "@type": "type.googleapis.com/CreateGlobalVar",
       "globalVar": {
+        "name": "shortx_key_custom",
+        "type": {
+          "@type": "type.googleapis.com/StringVar"
+        },
+        "isSecret": true
+      },
+      "id": "A-ai-key-custom"
+    },
+    {
+      "@type": "type.googleapis.com/CreateGlobalVar",
+      "globalVar": {
         "name": "shortx_ai_provider",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "OpenAI"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-provider"
     },
@@ -133,10 +143,9 @@
       "globalVar": {
         "name": "shortx_ai_model",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "gpt-5"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-model"
     },
@@ -145,10 +154,9 @@
       "globalVar": {
         "name": "shortx_ai_protocol",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "openai_responses"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-protocol"
     },
@@ -157,10 +165,9 @@
       "globalVar": {
         "name": "shortx_ai_base_url",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "https://api.openai.com/v1/responses"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-endpoint"
     },
@@ -169,10 +176,9 @@
       "globalVar": {
         "name": "shortx_ai_key_variable",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "shortx_key_openai"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-key-variable"
     },
@@ -193,10 +199,9 @@
       "globalVar": {
         "name": "shortx_ai_skills_dir",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "/data/data/com.shortx/files/skills"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-skills-dir"
     },
@@ -205,10 +210,9 @@
       "globalVar": {
         "name": "shortx_ai_skills_archive",
         "type": {
-          "@type": "type.googleapis.com/StringVar",
-          "value": "/data/data/com.shortx/files/shortx-rule-creator.zip"
+          "@type": "type.googleapis.com/StringVar"
         },
-        "isSecret": false
+        "isSecret": true
       },
       "id": "A-ai-skills-archive"
     },
@@ -330,12 +334,12 @@
     {
       "@type": "type.googleapis.com/ShowTextFieldDialog",
       "title": "ShortX AI 配置",
-      "message": "输入：provider|model|protocol|完整请求URL|keyVariableName|skills私有目录。",
+      "message": "输入：provider|model|protocol|完整请求URL|keyVariableName|skills私有目录。自定义服务商请使用 keyVariableName=shortx_key_custom；所有配置与端点只写入隐私全局变量。",
       "cancelable": false,
       "textFields": [
         {
           "label": "配置",
-          "placeholder": "OpenAI|gpt-5|openai_responses|https://api.openai.com/v1/responses|shortx_key_openai|/data/data/com.shortx/files/skills",
+          "placeholder": "Custom|your-model|openai_responses|https://your-provider.example/v1/responses|shortx_key_custom|/data/data/com.shortx/files/skills",
           "isRequired": "true",
           "value": ""
         }
@@ -346,7 +350,7 @@
     },
     {
       "@type": "type.googleapis.com/ExecuteMVEL",
-      "expression": "String cfg={textFieldInput1}; String[] p=cfg.split(\"\\\\|\"); if(p.length<6)return \"格式错误\"; String provider=p[0].trim(); String model=p[1].trim(); String protocol=p[2].trim(); String endpoint=p[3].trim(); String keyVar=p[4].trim(); String skillsDir=p[5].trim(); if(!(protocol==\"openai_responses\"||protocol==\"openai_chat\"||protocol==\"anthropic_messages\"))return \"协议无效\"; shortx.writeGlobalVar(\"shortx_ai_provider\",provider); shortx.writeGlobalVar(\"shortx_ai_model\",model); shortx.writeGlobalVar(\"shortx_ai_protocol\",protocol); shortx.writeGlobalVar(\"shortx_ai_base_url\",endpoint); shortx.writeGlobalVar(\"shortx_ai_key_variable\",keyVar); shortx.writeGlobalVar(\"shortx_ai_enabled_count\",\"1\"); shortx.writeGlobalVar(\"shortx_ai_skills_dir\",skillsDir); return keyVar;",
+      "expression": "String cfg={textFieldInput1}; String[] p=cfg.split(\"\\\\|\"); if(p.length<6)return \"格式错误\"; String provider=p[0].trim(); String model=p[1].trim(); String protocol=p[2].trim(); String endpoint=p[3].trim(); String keyVar=p[4].trim(); String skillsDir=p[5].trim(); if(!(keyVar==\"shortx_key_openai\"||keyVar==\"shortx_key_anthropic\"||keyVar==\"shortx_key_google\"||keyVar==\"shortx_key_xai\"||keyVar==\"shortx_key_deepseek\"||keyVar==\"shortx_key_mistral\"||keyVar==\"shortx_key_groq\"||keyVar==\"shortx_key_together\"||keyVar==\"shortx_key_openrouter\"||keyVar==\"shortx_key_gemini\"||keyVar==\"shortx_key_custom\"))return \"Key 变量名不在允许列表中\"; if(!(skillsDir.startsWith(\"/data/data/\")||skillsDir.startsWith(\"/data/user/0/\")))return \"skills 私有目录必须位于 /data/data 或 /data/user/0 下\"; shortx.writeGlobalVar(\"shortx_ai_provider\",provider); shortx.writeGlobalVar(\"shortx_ai_model\",model); shortx.writeGlobalVar(\"shortx_ai_protocol\",protocol); shortx.writeGlobalVar(\"shortx_ai_base_url\",endpoint); shortx.writeGlobalVar(\"shortx_ai_key_variable\",keyVar); shortx.writeGlobalVar(\"shortx_ai_enabled_count\",\"1\"); shortx.writeGlobalVar(\"shortx_ai_skills_dir\",skillsDir); shortx.writeGlobalVar(\"shortx_ai_skills_archive\",skillsDir+\"/shortx-rule-creator.zip\"); return keyVar;",
       "context": "CoroutineContext_Default",
       "customContextDataKey": {},
       "id": "A-ai-init-parse"
@@ -370,27 +374,17 @@
     },
     {
       "@type": "type.googleapis.com/ExecuteMVEL",
-      "expression": "String keyVar=shortx.readGlobalVar(\"shortx_ai_key_variable\"); shortx.writeGlobalVar(keyVar,{textFieldInput2}); return \"Key 已保存\";",
+      "expression": "String keyVar=shortx.readGlobalVar(\"shortx_ai_key_variable\"); shortx.writeGlobalVar(keyVar,{textFieldInput1}); return \"Key 已保存\";",
       "context": "CoroutineContext_Default",
       "customContextDataKey": {},
       "id": "A-ai-init-key-save"
     },
     {
-      "@type": "type.googleapis.com/DownloadFile",
-      "subject": {
-        "title": "下载 ShortX skills 压缩包",
-        "description": "下载包含完整 skills/SKILL.md、references 与 shortx-rule-creator/SKILL.md 的固定压缩包。",
-        "url": "https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip",
-        "fileName": "shortx-rule-creator.zip"
-      },
-      "id": "A-ai-download-skills"
-    },
-    {
       "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nARCHIVE=\"{downloadFilePath}\"\nTARGET=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in */shortx-rule-creator.zip) ;; *) exit 2 ;; esac\ncase \"$TARGET\" in /data/data/com.shortx/files/*) ;; *) exit 4 ;; esac\ncommand -v unzip >/dev/null 2>&1 || exit 127\nSTAGE=\"$TARGET.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/SKILL.md\"\ntest -d \"$STAGE/references\"\nrm -rf \"$TARGET\"\nmv \"$STAGE\" \"$TARGET\"",
+      "command": "set -eu\nURL=\"https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip\"\nARCHIVE=\"globalVarOf$shortx_ai_skills_archive\"\nTARGET_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 2 ;; esac\ncase \"$TARGET_ROOT\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 4 ;; esac\ncommand -v curl >/dev/null 2>&1 || exit 127\ncommand -v unzip >/dev/null 2>&1 || exit 127\nmkdir -p \"$TARGET_ROOT\"\ncurl --fail --location --silent --show-error --retry 2 --connect-timeout 15 \"$URL\" --output \"$ARCHIVE\"\nSTAGE=\"$TARGET_ROOT.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -Z1 \"$ARCHIVE\" | while IFS= read -r entry; do case \"$entry\" in shortx-rule-creator/*) ;; *) exit 3 ;; esac; case \"$entry\" in /*|*../*) exit 3 ;; esac; done\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/shortx-rule-creator/SKILL.md\"\ntest -d \"$STAGE/shortx-rule-creator/references\"\nrm -rf \"$TARGET_ROOT/shortx-rule-creator\"\nmv \"$STAGE/shortx-rule-creator\" \"$TARGET_ROOT/shortx-rule-creator\"\nrm -rf \"$STAGE\"",
       "singleShot": true,
       "actionOnError": "Break",
-      "id": "A-ai-unzip-skills"
+      "id": "A-ai-download-and-unzip-skills"
     },
     {
       "@type": "type.googleapis.com/WriteGlobalVar",
@@ -416,7 +410,66 @@
   "title": "ShortX AI 首次初始化与密钥设置",
   "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认，设置唯一启用模型，下载并解压 skills 压缩包。",
   "versionCode": "7",
-  "hook": {},
+  "hook": {
+    "actionsOnStop": [
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_key_custom"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_provider"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_model"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_protocol"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_base_url"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_key_variable"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_enabled_count"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_skills_dir"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_skills_archive"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_skills_loaded"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_history"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_pending_prompt"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_response_text"
+      },
+      {
+        "@type": "type.googleapis.com/DeleteGlobalVar",
+        "varName": "shortx_ai_session_store"
+      }
+    ]
+  },
   "quit": {},
   "parameters": []
 }

@@ -30,6 +30,7 @@ jobs:
           unzip -tq skills/shortx-rule-creator.zip
           test "$(unzip -Z1 skills/shortx-rule-creator.zip | grep -c '^shortx-rule-creator/')" -ge 7
           unzip -Z1 skills/shortx-rule-creator.zip | grep -qx 'shortx-rule-creator/SKILL.md'
+          test "$(unzip -Z1 skills/shortx-rule-creator.zip | grep -c '^shortx-rule-creator/references/')" -ge 6
 
       - name: Commit archive
         uses: stefanzweifel/git-auto-commit-action@v5

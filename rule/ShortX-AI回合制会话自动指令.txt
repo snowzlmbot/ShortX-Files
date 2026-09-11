@@ -41,7 +41,7 @@
       "_elseActions": [
         {
           "@type": "type.googleapis.com/ShellCommand",
-          "command": "set -eu\nSKILLS_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\nSKILL_DIR=\"$SKILLS_ROOT/shortx-rule-creator\"\ntest -f \"$SKILL_DIR/SKILL.md\"\ntest -d \"$SKILL_DIR/references\"",
+          "command": "set -eu\nSKILLS_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\nSKILL_DIR=\"$SKILLS_ROOT/shortx-rule-creator\"\ntest -f \"$SKILL_DIR/SKILL.md\"\ntest -d \"$SKILL_DIR/references\"\nfor f in \"$SKILL_DIR\"/references/*.md; do test -s \"$f\"; done",
           "singleShot": true,
           "actionOnError": "Break",
           "id": "A-ai-skills-preflight"
@@ -291,25 +291,15 @@
         "_ifCondOpPayload": {},
         "_ifActions": [
           {
-            "@type": "type.googleapis.com/DownloadFile",
-            "subject": {
-              "title": "首次下载 ShortX skills",
-              "description": "下载包含完整 skills/SKILL.md、references 与 shortx-rule-creator/SKILL.md 的固定压缩包。",
-              "url": "https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip",
-              "fileName": "shortx-rule-creator.zip"
-            },
-            "id": "A-ai-skills-download"
-          },
-          {
             "@type": "type.googleapis.com/ShellCommand",
-            "command": "set -eu\nARCHIVE=\"{downloadFilePath}\"\nTARGET=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in */shortx-rule-creator.zip) ;; *) exit 2 ;; esac\ncase \"$TARGET\" in /data/data/com.shortx/files/*) ;; *) exit 4 ;; esac\ncommand -v unzip >/dev/null 2>&1 || exit 127\nSTAGE=\"$TARGET.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/SKILL.md\"\ntest -d \"$STAGE/references\"\nrm -rf \"$TARGET\"\nmv \"$STAGE\" \"$TARGET\"",
+            "command": "set -eu\nURL=\"https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip\"\nARCHIVE=\"globalVarOf$shortx_ai_skills_archive\"\nTARGET_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\ncase \"$ARCHIVE\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 2 ;; esac\ncase \"$TARGET_ROOT\" in /data/data/*/files/*|/data/user/0/*/files/*) ;; *) exit 4 ;; esac\ncommand -v curl >/dev/null 2>&1 || exit 127\ncommand -v unzip >/dev/null 2>&1 || exit 127\nmkdir -p \"$TARGET_ROOT\"\ncurl --fail --location --silent --show-error --retry 2 --connect-timeout 15 \"$URL\" --output \"$ARCHIVE\"\nSTAGE=\"$TARGET_ROOT.__staging\"\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -Z1 \"$ARCHIVE\" | while IFS= read -r entry; do case \"$entry\" in shortx-rule-creator/*) ;; *) exit 3 ;; esac; case \"$entry\" in /*|*../*) exit 3 ;; esac; done\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/shortx-rule-creator/SKILL.md\"\ntest -d \"$STAGE/shortx-rule-creator/references\"\nrm -rf \"$TARGET_ROOT/shortx-rule-creator\"\nmv \"$STAGE/shortx-rule-creator\" \"$TARGET_ROOT/shortx-rule-creator\"\nrm -rf \"$STAGE\"",
             "singleShot": true,
             "actionOnError": "Break",
-            "id": "A-ai-skills-unzip"
+            "id": "A-ai-download-and-unzip-skills"
           },
           {
             "@type": "type.googleapis.com/ShowToast",
-            "message": "skills 压缩包已下载并自动解压；每次 AI 回合会先读取私有目录中的 SKILL.md 与 references。",
+            "message": "skills 压缩包已下载并自动解压；每次 AI 回合会先校验并读取私有目录中的 shortx-rule-creator/SKILL.md 与 references。",
             "customContextDataKey": {},
             "id": "A-ai-skills-first-use"
           }
