@@ -137,7 +137,7 @@ object Gen {
         return File(rootDir, childDir)
             .takeIf { it.exists() }
             ?.walkTopDown()
-            ?.filter { it.isFile }
+            ?.filter { it.isFile && !it.name.equals(".DS_Store", ignoreCase = true) }
             ?: emptySequence()
     }
 

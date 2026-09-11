@@ -7,6 +7,10 @@ repositories {
     mavenCentral()
 }
 
+// The bundled core-api.jar is compiled for Java 21, so the generator must run
+// on Java 21. Keep the Kotlin plugin version aligned with the existing source
+// until the toolchain is upgraded together.
+
 dependencies {
     val retrofit = "com.squareup.retrofit2:retrofit:2.7.1"
     val retrofitConverterGson = "com.squareup.retrofit2:converter-gson:2.7.1"

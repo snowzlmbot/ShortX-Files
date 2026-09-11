@@ -51,6 +51,11 @@ shortx_ai_enabled_count = 1
 - AI 收到的约束要求其读取私有 `shortx-rule-creator/SKILL.md` 和 references，并按该规范生成 ShortX DirectAction/Rule。
 - 删除一键指令或自动指令时，会通过 `actionsOnDeleted` 清理配置变量、会话变量和所有服务商 Key 变量。
 
+## 生成器兼容性
+
+当前仓库生成器会递归读取 `da/`、`rule/` 和 `code/` 下的全部文件，并交给 ShortX 解析器；因此这些目录只能放有效的 ShortX 分享文件。说明文档应放在目录外。
+
+
 ## 重要限制
 
 这些限制来自当前 `shortx-rule-creator` 参考中公开的 ShortX 动作能力，不能把它们包装成已完成的功能：
