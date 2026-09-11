@@ -61,6 +61,7 @@ shortx_ai_enabled_count = 1
 这些限制来自当前 `shortx-rule-creator` 参考中公开的 ShortX 动作能力，不能把它们包装成已完成的功能：
 
 - `DownloadFile` 可以下载仓库 ZIP，但公开动作没有可靠、通用的“解压 ZIP + 递归读取目录并把全部 Markdown 注入模型上下文”的组合动作。因此导入后需要手动把 `skills/` 解压到私有目录；规则会把该目录路径加入约束，但不能证明运行时确实读取了全部文件。
+- `WriteGlobalVar` 的 `autoCreateIfMissing` 不是当前 ShortX `core-api.jar` 支持的字段；写入前应通过 `CreateGlobalVar` 创建变量，或删除该字段。
 - ShortX 的 `HttpRequest` 参考只描述普通 HTTP 响应适配，没有 SSE/HTTP chunk 的流式输出动作。因此当前实现是“提交一回合、等待完整响应、显示完整回复”，不是 token 级流式输出。
 - 当前会话历史保存在 ShortX 隐私全局变量中。规则没有可验证的 AES/Android Keystore 加密 API，因此不能声称已经实现密码学加密；如 ShortX 版本没有对 `isSecret` 全局变量提供加密存储，历史仍可能是普通本地变量存储。
 - 会话上下文没有自动读取各模型服务商的上下文窗口元数据，也没有自动按 token 计数截断；`max_tokens`/`max_output_tokens` 当前是固定的 4096，使用超长历史时需要手动新建会话或后续扩展。
