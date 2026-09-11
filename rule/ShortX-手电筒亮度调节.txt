@@ -9,7 +9,6 @@
     "@type": "type.googleapis.com/WriteLocalVar",
     "varName": "手电筒亮度路径",
     "valueAsString": "/sys/class/leds/led:torch_1/brightness",
-    "autoCreateIfMissing": true,
     "customContextDataKey": {
     },
     "id": "A-55b63b80-1d56-47be-9898-4cae7cc6a7e4"
@@ -17,7 +16,6 @@
     "@type": "type.googleapis.com/WriteLocalVar",
     "varName": "手电筒最大亮度路径",
     "valueAsString": "/sys/class/leds/led:torch_1/max_brightness",
-    "autoCreateIfMissing": true,
     "customContextDataKey": {
     },
     "id": "A-0fcdbb07-a605-41e6-8a28-09af6753b006"
@@ -218,8 +216,7 @@
       "varName": "手电筒亮度百分比",
       "valueAsString": "0",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-94215362-9f0e-4fc4-aa66-9608118b1fac"
     }, {
@@ -227,8 +224,7 @@
       "varName": "手电筒亮度变量",
       "valueAsString": "0",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-91e971c9-ee20-40af-b200-1839867897ff"
     }],
@@ -263,8 +259,7 @@
       "varName": "手电筒亮度百分比",
       "valueAsString": "0",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-94215362-9f0e-4fc4-aa66-9608118b1fac"
     }, {
@@ -272,8 +267,7 @@
       "varName": "手电筒亮度变量",
       "valueAsString": "0",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-91e971c9-ee20-40af-b200-1839867897ff"
     }],

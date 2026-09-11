@@ -11,7 +11,6 @@
     "varName": "左右声道音量平衡",
     "valueAsString": "0.0",
     "op": "WriteGlobalVarOp_Override",
-    "autoCreateIfMissing": true,
     "customContextDataKey": {
     },
     "note": "左右声道\n值为单精度浮点数\n范围：-1.0～1.0\n负数则表示向左偏\n正数则表示向右偏\n0.0则表示中间",
@@ -48,8 +47,7 @@
       "varName": "master_balance命名空间",
       "valueAsString": "{master_balance}",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-d1da75da-d0a9-44a8-aea3-4a78b10eb45b"
     }],
@@ -94,8 +92,7 @@
       "varName": "master_balance命名空间",
       "valueAsString": "{master_balance}",
       "op": "WriteGlobalVarOp_Override",
-      "autoCreateIfMissing": true,
-      "customContextDataKey": {
+        "customContextDataKey": {
       },
       "id": "A-d1da75da-d0a9-44a8-aea3-4a78b10eb45b"
     }]
