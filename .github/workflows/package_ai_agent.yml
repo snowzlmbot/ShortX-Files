@@ -1,0 +1,41 @@
+name: Package local AI agent
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "app/**"
+      - "!app/shortx-local-ai-agent.zip"
+      - "skills/shortx-rule-creator/**"
+      - "tools/AutoGen/scripts/build_ai_agent_zip.py"
+      - ".github/workflows/package_ai_agent.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build local agent archive
+        run: python3 tools/AutoGen/scripts/build_ai_agent_zip.py
+      - name: Verify local agent archive
+        run: |
+          unzip -tq app/shortx-local-ai-agent.zip
+          unzip -Z1 app/shortx-local-ai-agent.zip | grep -qx 'shortx-local-ai-agent/app/server.py'
+          unzip -Z1 app/shortx-local-ai-agent.zip | grep -qx 'shortx-local-ai-agent/app/configure_model.py'
+          unzip -Z1 app/shortx-local-ai-agent.zip | grep -qx 'shortx-local-ai-agent/app/env-key-put'
+          unzip -Z1 app/shortx-local-ai-agent.zip | grep -qx 'shortx-local-ai-agent/app/model.json'
+          unzip -Z1 app/shortx-local-ai-agent.zip | grep -qx 'shortx-local-ai-agent/skills/shortx-rule-creator/SKILL.md'
+      - name: Commit archive
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: app/shortx-local-ai-agent.zip
+          commit_message: "chore: package local ShortX AI agent"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"

@@ -1,0 +1,17 @@
+#!/system/bin/sh
+# Store a provider key in the environment file used by the local agent.
+# The calling DirectAction must provide the key through stdin; never pass it in
+# argv or print it.
+set -eu
+BASE=/data/local/ai-agent
+ENV_FILE="$BASE/config/agent.env"
+ALIAS="${1:-}"
+case "$ALIAS" in
+  shortx-ai-*) ;;
+  *) exit 2 ;;
+esac
+mkdir -p "$BASE/config"
+KEY_B64=$(cat | base64 | tr -d '\n')
+test -n "$KEY_B64"
+printf 'AI_AGENT_API_KEY_B64=%s\n' "$KEY_B64" > "$ENV_FILE"
+chmod 600 "$ENV_FILE"

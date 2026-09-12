@@ -1,0 +1,15 @@
+{
+  "name": "shortx-local-ai-agent",
+  "version": "1.0.0",
+  "description": "Local loopback ShortX AI agent service",
+  "private": true,
+  "runtime": "python3",
+  "entry": "app/server.py",
+  "keyStorage": "root-only environment file (AI_AGENT_ENV_FILE), not model.json or sessions",
+  "dependencies": [],
+  "security": {
+    "bind": "127.0.0.1",
+    "sessions": "AES-256-CTR plus HMAC-SHA256 integrity envelope",
+    "apiKeys": "AI_AGENT_API_KEY loaded from root-only AI_AGENT_ENV_FILE"
+  }
+}

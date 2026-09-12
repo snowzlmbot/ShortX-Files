@@ -1,0 +1,35 @@
+{
+  "actions": [
+    {
+      "@type": "type.googleapis.com/ShellCommand",
+      "command": "set -u\nBASE=/data/local/ai-agent\nPIDFILE=\"$BASE/run/server.pid\"\nPORTFILE=\"$BASE/run/port\"\nLOG=\"$BASE/logs/stop.log\"\nmkdir -p \"$BASE/logs\"\nPORT=6666\n[ -s \"$PORTFILE\" ] && PORT=\"$(cat \"$PORTFILE\")\"\nPIDS=\"\"\nif [ -s \"$PIDFILE\" ]; then PIDS=\"$(cat \"$PIDFILE\")\"; fi\nif command -v pgrep >/dev/null 2>&1; then CHILDREN=\"$(pgrep -P \"$PIDS\" 2>/dev/null || true)\"; PIDS=\"$PIDS $CHILDREN\"; fi\nfor pid in $PIDS; do kill -TERM \"$pid\" 2>/dev/null || true; done\ni=0; while [ $i -lt 10 ]; do alive=0; for pid in $PIDS; do kill -0 \"$pid\" 2>/dev/null && alive=1 || true; done; [ $alive -eq 0 ] && break; sleep 1; i=$((i+1)); done\nfor pid in $PIDS; do kill -KILL \"$pid\" 2>/dev/null || true; done\nrm -f \"$PIDFILE\" \"$PORTFILE\"\nprintf '%s stopped port=%s pids=%s\\n' \"$(date -u +%FT%TZ)\" \"$PORT\" \"$PIDS\" >>\"$LOG\"\nexit 0",
+      "singleShot": true,
+      "actionOnError": "Continue",
+      "customContextDataKey": {
+        "keys": [
+          {"first": "shellOut", "second": "ai_agent_stop_output"},
+          {"first": "shellErr", "second": "ai_agent_stop_error"},
+          {"first": "shellCode", "second": "ai_agent_stop_code"}
+        ]
+      },
+      "id": "A-stop-service"
+    },
+    {
+      "@type": "type.googleapis.com/ShowToast",
+      "message": "本地 AI 服务已停止；会话、模型配置和 skills 保留在 /data/local/ai-agent/。",
+      "id": "A-stop-done"
+    }
+  ],
+  "id": "DA-shortx-ai-agent-stop-001",
+  "lastUpdateTime": "0",
+  "createTime": "0",
+  "author": {"name": "snowzlmbot"},
+  "title": "结束AI指令生成",
+  "description": "幂等停止本地 AI 服务、子进程和端口占用，保留加密会话存储、模型配置、skills 与日志。",
+  "versionCode": "1",
+  "hook": {},
+  "quit": {},
+  "parameters": []
+}
+###------###
+{"type":"da"}

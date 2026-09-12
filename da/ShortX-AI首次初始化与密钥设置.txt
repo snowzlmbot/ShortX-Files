@@ -396,7 +396,7 @@
     },
     {
       "@type": "type.googleapis.com/ShowToast",
-      "message": "初始化完成：只启用一个服务商；skills 已下载并尝试自动解压。",
+      "message": "初始化完成：已初始化的配置将写入隐私全局变量；默认只启用一个自定义服务商模板。",
       "customContextDataKey": {},
       "id": "A-ai-init-done"
     }
@@ -408,8 +408,8 @@
     "name": "snowzlmbot"
   },
   "title": "ShortX AI 首次初始化与密钥设置",
-  "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认；支持自定义服务商、模型、协议、完整端点与 Key 变量，使用 curl 下载并解压 skills 压缩包。",
-  "versionCode": "8",
+  "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认；支持自定义服务商、模型、协议、完整端点与 Key 变量，使用 curl 下载并自动解压 skills 压缩包。",
+  "versionCode": "9",
   "hook": {},
   "quit": {},
   "parameters": []

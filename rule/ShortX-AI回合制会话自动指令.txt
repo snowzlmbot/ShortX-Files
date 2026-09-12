@@ -15,7 +15,7 @@
       "_if": [
         {
           "@type": "type.googleapis.com/MatchMVEL",
-          "expression": "shortx.readGlobalVar('shortx_ai_enabled_count') != '1' || shortx.readGlobalVar('shortx_ai_base_url') == '' || shortx.readGlobalVar('shortx_ai_key_variable') == '' || shortx.readGlobalVar('shortx_ai_pending_prompt') == ''",
+          "expression": "shortx.readGlobalVar('shortx_ai_enabled_count') != '1' || shortx.readGlobalVar('shortx_ai_base_url') == '' || shortx.readGlobalVar('shortx_ai_key_variable') == '' || shortx.readGlobalVar('shortx_ai_pending_prompt') == '' || shortx.readGlobalVar('shortx_ai_skills_loaded') != 'true'",
           "id": "C-ai-guard"
         }
       ],
@@ -41,9 +41,17 @@
       "_elseActions": [
         {
           "@type": "type.googleapis.com/ShellCommand",
-          "command": "set -eu\nSKILLS_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\nSKILL_DIR=\"$SKILLS_ROOT/shortx-rule-creator\"\ntest -f \"$SKILL_DIR/SKILL.md\"\ntest -d \"$SKILL_DIR/references\"\nfor f in \"$SKILL_DIR\"/references/*.md; do test -s \"$f\"; done",
+          "command": "set -eu\nSKILLS_ROOT=\"globalVarOf$shortx_ai_skills_dir\"\nSKILL_DIR=\"$SKILLS_ROOT/shortx-rule-creator\"\ntest -f \"$SKILL_DIR/SKILL.md\"\ntest -d \"$SKILL_DIR/references\"\nfor f in \"$SKILL_DIR\"/references/*.md; do test -s \"$f\"; done\nprintf '%s\\n' '--- shortx-rule-creator/SKILL.md ---'\ncat \"$SKILL_DIR/SKILL.md\"\nfor f in \"$SKILL_DIR\"/references/*.md; do printf '%s\\n' \"--- shortx-rule-creator/references/$(basename \"$f\") ---\"; cat \"$f\"; done",
           "singleShot": true,
           "actionOnError": "Break",
+          "customContextDataKey": {
+            "keys": [
+              {
+                "first": "shellOut",
+                "second": "shortx_ai_skills_text"
+              }
+            ]
+          },
           "id": "A-ai-skills-preflight"
         },
         {
@@ -271,7 +279,7 @@
     "name": "snowzlmbot"
   },
   "title": "ShortX AI 回合制会话自动指令",
-  "description": "点击 ShortX 磁贴 1 处理一键指令写入的本回合消息；支持 OpenAI Responses、OpenAI Chat Completions 和 Anthropic Messages，且只调用当前唯一启用配置。",
+  "description": "点击 ShortX 磁贴 1 处理一键指令写入的本回合消息；每回合校验并读取私有 shortx-rule-creator/SKILL.md 与 references；支持 OpenAI Responses、OpenAI Chat Completions 和 Anthropic Messages，且只调用当前唯一启用配置。",
   "isEnabled": true,
   "condOp": "ALL",
   "hook": {
@@ -280,10 +288,8 @@
         "@type": "type.googleapis.com/IfThenElse",
         "_if": [
           {
-            "@type": "type.googleapis.com/EvaluateGlobalVar",
-            "op": "IsNotExists",
-            "varName": "shortx_ai_skills_loaded",
-            "payload": {},
+            "@type": "type.googleapis.com/MatchMVEL",
+            "expression": "shortx.readGlobalVar('shortx_ai_skills_loaded') != 'true'",
             "id": "C-ai-skills-missing"
           }
         ],

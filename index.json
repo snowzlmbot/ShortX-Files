@@ -12,6 +12,17 @@
       "requireMinShortXProtoVersion": 0
     },
     {
+      "id": "DA-shortx-ai-agent-init-001",
+      "fileUrl": "ShortX-AI生成指令首次环境初始化.txt",
+      "title": "AI生成指令首次环境初始化指令",
+      "description": "在 Android root 设备初始化本地 Python AI Agent、skills、模型配置、root-only 环境变量 Key、会话目录、日志目录与端口配置。",
+      "versionCode": 4,
+      "updateTimeMillis": 0,
+      "author": "snowzlmbot",
+      "tags": [],
+      "requireMinShortXProtoVersion": 0
+    },
+    {
       "id": "SHARED-DA-39c10e54-a82c-4da0-bc20-5baa00d24f37",
       "fileUrl": "ShortX-小米步数管理3.txt",
       "title": "小米步数管理3",
@@ -111,6 +122,17 @@
       "requireMinShortXProtoVersion": 0
     },
     {
+      "id": "DA-shortx-ai-agent-start-001",
+      "fileUrl": "ShortX-启动AI指令生成.txt",
+      "title": "启动AI指令生成",
+      "description": "检查 root 初始化、skills、模型配置和 root-only 环境变量，启动仅监听 127.0.0.1:6666/6667 的 Python 本地 AI 服务并打开网页。",
+      "versionCode": 2,
+      "updateTimeMillis": 0,
+      "author": "snowzlmbot",
+      "tags": [],
+      "requireMinShortXProtoVersion": 0
+    },
+    {
       "id": "SHARED-DA-88e8aacf-6c30-4c6a-9b75-b4047d42ba20",
       "fileUrl": "ShortX-设置项监视器_4.4.txt",
       "title": "设置项监视器 4.4",
@@ -118,6 +140,17 @@
       "versionCode": 8,
       "updateTimeMillis": 1729245841948,
       "author": "He",
+      "tags": [],
+      "requireMinShortXProtoVersion": 0
+    },
+    {
+      "id": "DA-shortx-ai-agent-stop-001",
+      "fileUrl": "ShortX-结束AI指令生成.txt",
+      "title": "结束AI指令生成",
+      "description": "幂等停止本地 AI 服务、子进程和端口占用，保留加密会话存储、模型配置、skills 与日志。",
+      "versionCode": 1,
+      "updateTimeMillis": 0,
+      "author": "snowzlmbot",
       "tags": [],
       "requireMinShortXProtoVersion": 0
     },
@@ -169,8 +202,8 @@
       "id": "DA-shortx-ai-init-001",
       "fileUrl": "ShortX-AI首次初始化与密钥设置.txt",
       "title": "ShortX AI 首次初始化与密钥设置",
-      "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认；支持自定义服务商、模型、协议、完整端点与 Key 变量，使用 curl 下载并解压 skills 压缩包。",
-      "versionCode": 8,
+      "description": "创建服务商独立隐私全局变量，显示使用说明并等待 5 秒后确认；支持自定义服务商、模型、协议、完整端点与 Key 变量，使用 curl 下载并自动解压 skills 压缩包。",
+      "versionCode": 9,
       "updateTimeMillis": 0,
       "author": "snowzlmbot",
       "tags": [],
@@ -347,7 +380,7 @@
       "id": "RULE-shortx-ai-session-001",
       "fileUrl": "ShortX-AI回合制会话自动指令.txt",
       "title": "ShortX AI 回合制会话自动指令",
-      "description": "点击 ShortX 磁贴 1 处理一键指令写入的本回合消息；支持 OpenAI Responses、OpenAI Chat Completions 和 Anthropic Messages，且只调用当前唯一启用配置。",
+      "description": "点击 ShortX 磁贴 1 处理一键指令写入的本回合消息；每回合校验并读取私有 shortx-rule-creator/SKILL.md 与 references；支持 OpenAI Responses、OpenAI Chat Completions 和 Anthropic Messages，且只调用当前唯一启用配置。",
       "versionCode": 8,
       "updateTimeMillis": 0,
       "author": "snowzlmbot",

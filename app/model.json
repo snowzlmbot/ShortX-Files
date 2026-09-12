@@ -1,0 +1,20 @@
+{
+  "active_provider": "custom",
+  "providers": {
+    "custom": {
+      "enabled": true,
+      "protocol": "openai_responses",
+      "endpoint": "https://example.invalid/v1/responses",
+      "model": "replace-with-model-id",
+      "api_key_env": "AI_AGENT_API_KEY",
+      "context_messages": 20
+    }
+  },
+  "reasoning_profiles": {
+    "fast": {"label": "快速", "effort": "low", "max_output_tokens": 1024},
+    "balanced": {"label": "平衡", "effort": "medium", "max_output_tokens": 2048},
+    "deep": {"label": "深度思考", "effort": "high", "max_output_tokens": 4096}
+  },
+  "active_reasoning_profile": "balanced",
+  "listen_host": "127.0.0.1"
+}
