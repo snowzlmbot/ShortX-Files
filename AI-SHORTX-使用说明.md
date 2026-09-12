@@ -1,83 +1,63 @@
-# ShortX AI 一键指令与自动指令
+# ShortX AI Web 引擎云端指令
 
-本仓库新增了三份可导入的 ShortX 文本文件，以及供指令下载的 skills 压缩包：
+本目录已移除旧版“ShortX AI 回合制会话”三份原生规则。现在统一使用 `ai-web-engine` 提供的本地 Web 引擎，ShortX 只负责从云端拉取最新脚本并执行。
 
-- `da/ShortX-AI首次初始化与密钥设置.txt`
-- `da/ShortX-AI回合制会话与模型切换.txt`
-- `rule/ShortX-AI回合制会话自动指令.txt`
-- `skills/shortx-rule-creator.zip`
-
-## 本地 AI Agent 指令
-
-另外提供一组用于 root Android 本机本地 AI Agent 的 DirectAction：
+## 最新三条指令
 
 - `da/ShortX-AI生成指令首次环境初始化.txt`
 - `da/ShortX-启动AI指令生成.txt`
 - `da/ShortX-结束AI指令生成.txt`
-- `app/server.py`
-- `app/configure_model.py`
-- `app/env-key-put`
-- `app/model.json`
 
-初始化 DirectAction 会把本地服务资源和 `shortx-rule-creator` skill 安装到 `/data/local/ai-agent/`，启动 DirectAction 只绑定 `127.0.0.1`，停止 DirectAction 按 PID 文件优雅停止并保留会话/配置。
+三条指令的源代码位于公开仓库：
 
-### 本地 Agent 的 API Key
+- <https://github.com/snowzlmbot/ai-web-engine/tree/main/shortx>
 
-API Key 不写入 `model.json`、Shell 参数、日志或会话；本地服务从 root-only 文件读取：
+三条指令会通过 Raw 地址获取对应脚本：
 
 ```text
-/data/local/ai-agent/config/agent.env
+https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/init.sh
+https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/start.sh
+https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 ```
 
-文件格式由 `env-key-put` 写入：
+## 使用顺序
 
-```text
-AI_AGENT_API_KEY_B64=<base64 编码的 Key>
-```
-
-文件权限必须为 `600`。当前实现没有伪称接入 Android Keystore；若设备要使用 Keystore，需要将 `env-key-put` 替换为经过信任验证的 Keystore 桥接程序。
-
-本地服务支持：
-
-- `GET /health`
-- `GET /models`
-- `GET /sessions`
-- `GET /sessions/<id>`
-- `POST /sessions`
-- `POST /config`
-- `POST /chat`，SSE 流式输出
-
-支持协议：`openai_responses`、`openai_chat`、`anthropic_messages`。模型服务配置只保存 provider、model、协议、HTTPS endpoint 和 `AI_AGENT_API_KEY` 环境变量名；单次只启用一个 provider。
-
-## 导入顺序
-
-1. 导入并运行 `ShortX-AI首次初始化与密钥设置.txt`。
-2. 首次运行会显示使用说明链接；必须等待 5 秒倒计时结束后确认。
-3. 输入自定义服务商配置：
+1. 导入并运行 `ShortX-AI生成指令首次环境初始化.txt`。
+2. 初始化脚本会在 Android Root 设备创建 `/data/local/ai-instruction/`，按版本下载 Release 二进制和 skills；不会覆盖 `config/model_config.json`、`config/master.key` 或 `sessions/`。
+3. 在 ShortX 环境变量中设置：
 
    ```text
-   Custom|your-model|openai_responses|https://your-provider.example/v1/responses|shortx_key_custom|/data/data/com.shortx/files/skills
+   模型key
    ```
 
-4. 输入当前服务商 API Key。Key 只写入对应的 ShortX 隐私全局变量。
-5. 导入并启用 `ShortX-AI回合制会话自动指令.txt`，把它绑定到 ShortX 磁贴 1。
-6. 导入 `ShortX-AI回合制会话与模型切换.txt`。输入消息后，点击磁贴 1 发送请求并显示回复。
-7. 要使用本地 Agent，先导入并运行 `ShortX-AI生成指令首次环境初始化.txt`，再运行 `ShortX-启动AI指令生成.txt`。
+4. 导入并运行 `ShortX-启动AI指令生成.txt`。该指令将 `%模型key%` 注入为 `AI_WEB_ENGINE_API_KEY`，然后启动 `127.0.0.1:6666`。
+5. 浏览器访问：
 
-## skills 压缩包
+   ```text
+   http://127.0.0.1:6666
+   ```
 
-固定下载地址：
+6. 使用 `ShortX-结束AI指令生成.txt` 停止引擎。停止脚本只操作自身 PID 文件对应的引擎进程，不使用宽泛 `pkill -f`，也不删除配置、密钥、会话、skills 或日志。
 
-```text
-https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip
-```
+## 引擎能力
 
-压缩包内容为 `shortx-rule-creator/SKILL.md` 和 `shortx-rule-creator/references/`，初始化会将其解压到 `<skills私有目录>/shortx-rule-creator/`。
+- OpenAI 兼容协议；
+- Anthropic Messages 协议；
+- SSE 流式输出；
+- 模型切换；
+- 推理等级切换；
+- 新建和恢复历史会话；
+- AES-256-GCM 会话文件加密；
+- 自动加载 `shortx-rule-creator/SKILL.md` 和 references；
+- Web UI 嵌入 Android ARM64 Go 二进制。
 
-## 重要限制
+## 远端资源
 
-- root Android 设备必须提供 `curl`、`unzip`、`python3` 和 `openssl`；本仓库不伪造或静默部署缺失运行时。
-- Android Keystore 没有可验证的通用 ShortX 动作接口；本地 Agent 使用 root-only `agent.env`，不是 Keystore 存储。
-- SSE、真实模型请求和会话加密由 `/data/local/ai-agent/app/server.py` 提供，不是 ShortX 原生 HTTP 动作提供。
-- 本地服务只监听 loopback；不要把端口暴露到局域网或公网。
-- 本地结构、单元测试和 HTTP smoke test 不等同于真实 Android root 设备、模型服务商和 ROM 测试。
+- 仓库：<https://github.com/snowzlmbot/ai-web-engine>
+- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.0>
+- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.0/ai-web-engine-android-arm64>
+- 适配 skill：<https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip>
+
+## 说明
+
+此文档和三条指令是公开资源，不包含真实 API Key。环境变量 `模型key` 只在设备端展开并传给本地进程，不应写入仓库、日志、截图或会话。
