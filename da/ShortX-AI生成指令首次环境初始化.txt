@@ -1,101 +1,20 @@
 {
   "actions": [
     {
-      "@type": "type.googleapis.com/ShowAlertDialog",
-      "title": "AI 生成环境首次初始化",
-      "message": "将在 root Android 设备上创建 /data/local/ai-agent，安装本地 Python Agent、ShortX skill、模型配置、会话目录和日志目录。API Key 由 root-only agent.env 保存。",
-      "positive": "开始初始化",
-      "onPositive": [],
-      "negative": "取消",
-      "onNegative": [],
-      "neutral": "",
-      "onNeutral": [],
-      "cancelable": true,
-      "style": {},
-      "id": "A-init-confirm"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nmkdir -p \"$BASE/runtime\" \"$BASE/skills\" \"$BASE/sessions\" \"$BASE/config\" \"$BASE/logs\" \"$BASE/run\"\n[ \"$(id -u)\" = 0 ]\ncommand -v curl >/dev/null 2>&1\ncommand -v unzip >/dev/null 2>&1\ncommand -v python3 >/dev/null 2>&1\ncommand -v openssl >/dev/null 2>&1\nFREE_KB=$(df -k \"$BASE\" | awk 'NR==2 {print $4}')\n[ \"${FREE_KB:-0}\" -ge 262144 ]\nPORT=6666\nif command -v ss >/dev/null 2>&1 && ss -ltn | grep -q ':6666 '; then PORT=6667; fi\nprintf '%s\\n' \"$PORT\" >\"$BASE/run/port\"\nprintf '%s\\n' \"$(date -u +%FT%TZ)\" >\"$BASE/run/initialized_at\"\nprintf '%s\\n' \"127.0.0.1\" >\"$BASE/run/host\"\nchmod 700 \"$BASE\" \"$BASE/runtime\" \"$BASE/skills\" \"$BASE/sessions\" \"$BASE/config\" \"$BASE/logs\" \"$BASE/run\"\ncat >\"$BASE/config/agent.env\" <<'ENV'\n# AI_AGENT_API_KEY is written by the local configuration action.\nENV\nchmod 600 \"$BASE/config/agent.env\"",
+      "@type": "type.googleapis.com/shortx.ShellCommand",
+      "command": "set -eu\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ntmp=\"$BASE/scripts/init.sh.new\"\ncurl -fsSL --retry 2 --connect-timeout 15 https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/init.sh -o \"$tmp\" && [ -s \"$tmp\" ] && chmod 755 \"$tmp\" && mv \"$tmp\" \"$BASE/scripts/init.sh\" || { rm -f \"$tmp\"; exit 1; }\nexec \"$BASE/scripts/init.sh\"",
       "singleShot": true,
       "actionOnError": "Break",
-      "id": "A-init-system-check"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nURL=\"https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/app/shortx-local-ai-agent.zip\"\nARCHIVE=\"$BASE/run/shortx-local-ai-agent.zip\"\nSTAGE=\"$BASE/run/agent.__staging\"\ncurl --fail --location --silent --show-error --retry 2 --connect-timeout 15 \"$URL\" --output \"$ARCHIVE\"\nunzip -Z1 \"$ARCHIVE\" | while IFS= read -r entry; do case \"$entry\" in shortx-local-ai-agent/*) ;; *) exit 3 ;; esac; case \"$entry\" in /*|*../*) exit 3 ;; esac; done\nrm -rf \"$STAGE\"\nmkdir -p \"$STAGE\"\nunzip -oq \"$ARCHIVE\" -d \"$STAGE\"\ntest -f \"$STAGE/shortx-local-ai-agent/app/server.py\"\ntest -f \"$STAGE/shortx-local-ai-agent/app/model.json\"\ntest -f \"$STAGE/shortx-local-ai-agent/app/configure_model.py\"\ntest -f \"$STAGE/shortx-local-ai-agent/app/env-key-put\"\ntest -f \"$STAGE/shortx-local-ai-agent/skills/shortx-rule-creator/SKILL.md\"\ntest -d \"$STAGE/shortx-local-ai-agent/skills/shortx-rule-creator/references\"\nrm -rf \"$BASE/app\" \"$BASE/skills/shortx-rule-creator\"\ncp -a \"$STAGE/shortx-local-ai-agent/app\" \"$BASE/app\"\nmkdir -p \"$BASE/skills\"\ncp -a \"$STAGE/shortx-local-ai-agent/skills/shortx-rule-creator\" \"$BASE/skills/shortx-rule-creator\"\ncp \"$BASE/app/model.json\" \"$BASE/config/model.json\"\nchmod 700 \"$BASE/app\" \"$BASE/skills/shortx-rule-creator\"\nchmod 700 \"$BASE/app/env-key-put\"\nchmod 600 \"$BASE/config/model.json\" \"$BASE/config/agent.env\"\nrm -rf \"$STAGE\"\nprintf '%s\\n' \"$(date -u +%FT%TZ)\" >\"$BASE/run/agent_installed_at\"",
-      "singleShot": true,
-      "actionOnError": "Break",
-      "id": "A-init-install-agent"
-    },
-    {
-      "@type": "type.googleapis.com/ShowTextFieldDialog",
-      "title": "配置模型服务商",
-      "message": "输入 provider|model|protocol|完整 HTTPS endpoint。API Key 不写入配置；随后单独输入 Key。",
-      "cancelable": false,
-      "textFields": [
-        {
-          "label": "provider|model|protocol|endpoint",
-          "placeholder": "custom|your-model|openai_responses|https://your-provider.example/v1/responses",
-          "isRequired": "true",
-          "value": ""
-        }
-      ],
-      "style": {},
-      "id": "A-init-provider-input"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nprintf '%s' \"{textFieldInput1}\" | AI_AGENT_BASE=\"$BASE\" python3 \"$BASE/app/configure_model.py\"",
-      "singleShot": true,
-      "actionOnError": "Break",
-      "id": "A-init-save-model"
-    },
-    {
-      "@type": "type.googleapis.com/ShowTextFieldDialog",
-      "title": "输入模型服务商 API Key",
-      "message": "Key 通过 stdin 写入 600 权限 agent.env，不写入 model.json、日志、命令行或会话。",
-      "cancelable": false,
-      "textFields": [
-        {
-          "label": "API Key",
-          "placeholder": "仅输入当前启用服务商 Key",
-          "isRequired": "true",
-          "value": ""
-        }
-      ],
-      "style": {},
-      "id": "A-init-key-input"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nprintf '%s' \"{textFieldInput1}\" | \"$BASE/app/env-key-put\" custom\ntest -s \"$BASE/config/agent.env\"\nchmod 600 \"$BASE/config/agent.env\"\nprintf '%s\\n' \"$(date -u +%FT%TZ)\" >\"$BASE/run/configured_at\"",
-      "singleShot": true,
-      "actionOnError": "Break",
-      "id": "A-init-save-key"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nprintf '%s\\n' \"$(date -u +%FT%TZ)\" >\"$BASE/run/initialized_at\"\nprintf '%s\\n' 'shortx-ai-agent-v2' >\"$BASE/.initialized\"",
-      "singleShot": true,
-      "actionOnError": "Break",
-      "id": "A-init-finalize"
-    },
-    {
-      "@type": "type.googleapis.com/ShowToast",
-      "message": "初始化完成：Python Agent、skills、模型配置和 root-only API Key 环境文件已准备。",
-      "id": "A-init-done"
+      "id": "A-shortx-init"
     }
   ],
-  "id": "DA-shortx-ai-agent-init-001",
+  "id": "DA-ai-web-engine-init-001",
   "lastUpdateTime": "0",
   "createTime": "0",
-  "author": {
-    "name": "snowzlmbot"
-  },
-  "title": "AI生成指令首次环境初始化指令",
-  "description": "在 Android root 设备初始化本地 Python AI Agent、skills、模型配置、root-only 环境变量 Key、会话目录、日志目录与端口配置。",
-  "versionCode": "4",
+  "author": {"name":"snowzlmbot"},
+  "title": "AI Web 引擎首次环境初始化",
+  "description": "从云端拉取幂等 init.sh，初始化 Android ARM64 引擎、配置、skills 和保留会话目录。",
+  "versionCode": "1",
   "hook": {},
   "quit": {},
   "parameters": []

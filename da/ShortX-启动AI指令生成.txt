@@ -1,47 +1,12 @@
 {
-  "actions": [
-    {
-      "@type": "type.googleapis.com/ShowAlertDialog",
-      "title": "启动 AI 指令生成",
-      "message": "将以 root 权限启动仅监听 127.0.0.1 的本地 AI 服务。服务从 root-only agent.env 读取 API Key，不读取 ShortX 全局变量。",
-      "positive": "启动",
-      "onPositive": [],
-      "negative": "取消",
-      "onNegative": [],
-      "neutral": "",
-      "onNeutral": [],
-      "cancelable": true,
-      "style": {},
-      "id": "A-start-confirm"
-    },
-    {
-      "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-agent\nINIT=\"$BASE/.initialized\"\nSKILL=\"$BASE/skills/shortx-rule-creator/SKILL.md\"\nSERVER=\"$BASE/app/server.py\"\nENVFILE=\"$BASE/config/agent.env\"\nLOG=\"$BASE/logs/server.log\"\nPIDFILE=\"$BASE/run/server.pid\"\ntest \"$(id -u)\" = 0\ntest -f \"$INIT\"\ntest -f \"$SKILL\"\ntest -d \"$BASE/skills/shortx-rule-creator/references\"\ntest -f \"$SERVER\"\ntest -f \"$BASE/config/model.json\"\ntest -s \"$ENVFILE\"\n[ \"$(stat -c %a \"$ENVFILE\")\" = 600 ]\nmkdir -p \"$BASE/run\" \"$BASE/logs\"\nif [ -f \"$PIDFILE\" ] && kill -0 \"$(cat \"$PIDFILE\")\" 2>/dev/null; then exit 0; fi\nPORT=6666\nif command -v ss >/dev/null 2>&1 && ss -ltn | grep -q ':6666 '; then PORT=6667; fi\nPYTHON=\"$(command -v python3 || true)\"\n[ -n \"$PYTHON\" ] || exit 20\nexport AI_AGENT_BASE=\"$BASE\"\nexport AI_AGENT_HOST=127.0.0.1\nexport AI_AGENT_PORT=\"$PORT\"\nexport AI_AGENT_SKILL_DIR=\"$BASE/skills/shortx-rule-creator\"\nexport AI_AGENT_MODEL_CONFIG=\"$BASE/config/model.json\"\nexport AI_AGENT_ENV_FILE=\"$ENVFILE\"\nnohup \"$PYTHON\" \"$SERVER\" >>\"$LOG\" 2>&1 &\nPID=$!\necho \"$PID\" >\"$PIDFILE\"\necho \"$PORT\" >\"$BASE/run/port\"\ni=0; while [ $i -lt 30 ]; do if command -v curl >/dev/null 2>&1 && curl --fail --silent \"http://127.0.0.1:$PORT/health\" >/dev/null; then exit 0; fi; kill -0 \"$PID\" 2>/dev/null || exit 21; sleep 1; i=$((i+1)); done\nkill \"$PID\" 2>/dev/null || true\nexit 22",
-      "singleShot": true,
-      "actionOnError": "Break",
-      "customContextDataKey": {"keys": [{"first": "shellOut", "second": "ai_agent_start_output"}, {"first": "shellErr", "second": "ai_agent_start_error"}, {"first": "shellCode", "second": "ai_agent_start_code"}]},
-      "id": "A-start-service"
-    },
-    {
-      "@type": "type.googleapis.com/ExecuteMVEL",
-      "expression": "String port=\"6666\"; try { port=new java.io.BufferedReader(new java.io.FileReader(\"/data/local/ai-agent/run/port\")).readLine(); } catch(Exception ignored) {} return \"http://127.0.0.1:\"+port;",
-      "context": "CoroutineContext_Default",
-      "customContextDataKey": {"keys": [{"first": "mvelRet", "second": "ai_agent_url"}]},
-      "id": "A-start-url"
-    },
-    {"@type": "type.googleapis.com/StartActivityUrlSchema", "urlSchema": "{ai_agent_url}", "userId": 0, "id": "A-start-open-ui"},
-    {"@type": "type.googleapis.com/ShowToast", "message": "本地 AI 服务已启动：{ai_agent_url}", "id": "A-start-done"}
-  ],
-  "id": "DA-shortx-ai-agent-start-001",
-  "lastUpdateTime": "0",
-  "createTime": "0",
-  "author": {"name": "snowzlmbot"},
-  "title": "启动AI指令生成",
-  "description": "检查 root 初始化、skills、模型配置和 root-only 环境变量，启动仅监听 127.0.0.1:6666/6667 的 Python 本地 AI 服务并打开网页。",
-  "versionCode": "2",
-  "hook": {},
-  "quit": {},
-  "parameters": []
+  "actions": [{
+    "@type": "type.googleapis.com/shortx.ShellCommand",
+    "command": "set -u\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ntmp=\"$BASE/scripts/start.sh.new\"\nif curl -fsSL --retry 2 --connect-timeout 15 https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/start.sh -o \"$tmp\" && [ -s \"$tmp\" ]; then chmod 755 \"$tmp\" && mv \"$tmp\" \"$BASE/scripts/start.sh\"; else rm -f \"$tmp\"; printf '%s\\n' '[ERROR] start.sh 下载失败'; exit 1; fi\nexport AI_WEB_ENGINE_API_KEY=\"%模型key%\"\nexec \"$BASE/scripts/start.sh\"",
+    "singleShot": true,
+    "actionOnError": "Break",
+    "id": "A-shortx-start"
+  }],
+  "id":"DA-ai-web-engine-start-001","lastUpdateTime":"0","createTime":"0","author":{"name":"snowzlmbot"},"title":"启动 AI Web 引擎","description":"从云端拉取 start.sh，将 ShortX 环境变量 模型key 注入 AI_WEB_ENGINE_API_KEY，启动 127.0.0.1:6666 引擎并执行健康检查。","versionCode":"3","hook":{},"quit":{},"parameters":[]
 }
 ###------###
 {"type":"da"}
