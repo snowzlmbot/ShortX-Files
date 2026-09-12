@@ -30,14 +30,16 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
    模型key
    ```
 
-4. 导入并运行 `ShortX-启动AI指令生成.txt`。该指令将 `%模型key%` 注入为 `AI_WEB_ENGINE_API_KEY`，然后启动 `127.0.0.1:6666`。
+4. 导入并运行 `ShortX-启动AI指令生成.txt`。该指令将 `%模型key%` 注入为 `AI_WEB_ENGINE_API_KEY`，然后启动 `127.0.0.1:6688`。
 5. 浏览器访问：
 
    ```text
-   http://127.0.0.1:6666
+   http://127.0.0.1:6688
    ```
 
 6. 使用 `ShortX-结束AI指令生成.txt` 停止引擎。停止脚本只操作自身 PID 文件对应的引擎进程，不使用宽泛 `pkill -f`，也不删除配置、密钥、会话、skills 或日志。
+
+使用 `http://127.0.0.1:6688`，因为 Chromium/Chrome 会将 `6666` 判定为危险端口并返回 `ERR_UNSAFE_PORT`。
 
 ## 引擎能力
 
@@ -54,8 +56,8 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 ## 远端资源
 
 - 仓库：<https://github.com/snowzlmbot/ai-web-engine>
-- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.0>
-- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.0/ai-web-engine-android-arm64>
+- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.5>
+- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.5/ai-web-engine-android-arm64>
 - 适配 skill：<https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip>
 
 ## 说明
