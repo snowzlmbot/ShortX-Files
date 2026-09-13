@@ -23,7 +23,7 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 ## 使用顺序
 
 1. 导入并运行 `ShortX-AI生成指令首次环境初始化.txt`。
-2. 初始化脚本会在 Android Root 设备创建 `/data/local/ai-instruction/`，按版本下载 Release 二进制和 skills；不会覆盖 `config/model_config.json`、`config/master.key` 或 `sessions/`。
+2. 初始化脚本会在 Android Root 设备创建 `/data/local/ai-instruction/`，按设备 ABI 自动下载对应 Release 二进制和 skills；支持 `arm64-v8a`、`armeabi-v7a`、`x86_64`、`x86`，不会覆盖 `config/model_config.json`、`config/master.key` 或 `sessions/`。
 3. 在 ShortX 环境变量中设置：
 
    ```text
@@ -45,7 +45,7 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 
 ## 引擎能力
 
-- OpenAI 兼容协议；
+- OpenAI Chat Completions 和 Responses 协议；
 - Anthropic Messages 协议；
 - SSE 流式输出；
 - 模型切换；
@@ -53,13 +53,14 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 - 新建和恢复历史会话；
 - AES-256-GCM 会话文件加密；
 - 自动加载 `shortx-rule-creator/SKILL.md` 和 references；
-- Web UI 嵌入 Android ARM64 Go 二进制。
+- Web UI 嵌入 Android 多架构 Go 二进制。
 
 ## 远端资源
 
 - 仓库：<https://github.com/snowzlmbot/ai-web-engine>
-- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.6>
-- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.6/ai-web-engine-android-arm64>
+- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.1.2>
+- 全架构引擎包：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.1.2/ai-web-engine-android-all.zip>
+- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.1.2/ai-web-engine-android-arm64>
 - 适配 skill：<https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip>
 
 ## 说明
