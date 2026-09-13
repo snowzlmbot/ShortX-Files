@@ -111,7 +111,7 @@
       "requireMinShortXProtoVersion": 0
     },
     {
-      "id": "",
+      "id": "DA-ai-web-engine-start-001",
       "fileUrl": "ShortX-启动AI指令生成.txt",
       "title": "启动 AI Web 引擎",
       "description": "从云端拉取 start.sh，将 ShortX 环境变量 模型key 注入 AI_WEB_ENGINE_API_KEY，启动 127.0.0.1:6688 引擎并执行健康检查；发现旧版本引擎时会先安全升级。",
@@ -133,7 +133,7 @@
       "requireMinShortXProtoVersion": 0
     },
     {
-      "id": "",
+      "id": "DA-ai-web-engine-stop-001",
       "fileUrl": "ShortX-结束AI指令生成.txt",
       "title": "结束 AI Web 引擎",
       "description": "只停止本指令启动且 PID/executable 校验一致的 ai-web-engine，不使用宽泛 pkill，保留配置与会话。",
