@@ -37,6 +37,8 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
    http://127.0.0.1:6688
    ```
 
+   首次打开如果右上角显示“需要配置”，这是正常的首次配置状态，不是连接失败。页面会自动打开“模型服务设置”。填写服务商、HTTPS 端点、协议、默认模型 ID 和模型列表后，点击“保存并连接”；状态变为“已连接”后，底部输入框和“发送”按钮会启用。
+
 6. 使用 `ShortX-结束AI指令生成.txt` 停止引擎。停止脚本只操作自身 PID 文件对应的引擎进程，不使用宽泛 `pkill -f`，也不删除配置、密钥、会话、skills 或日志。
 
 使用 `http://127.0.0.1:6688`，因为 Chromium/Chrome 会将 `6666` 判定为危险端口并返回 `ERR_UNSAFE_PORT`。
@@ -56,8 +58,8 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
 ## 远端资源
 
 - 仓库：<https://github.com/snowzlmbot/ai-web-engine>
-- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.5>
-- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.5/ai-web-engine-android-arm64>
+- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.0.6>
+- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.0.6/ai-web-engine-android-arm64>
 - 适配 skill：<https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip>
 
 ## 说明
