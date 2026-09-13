@@ -16,8 +16,8 @@
       "fileUrl": "ShortX-AI生成指令首次环境初始化.txt",
       "title": "AI Web 引擎首次环境初始化",
       "description": "ShortX 首次初始化指令会从云端拉取并执行 `init.sh`。该脚本只在 Android Root ARM64 设备上继续，真实下载并安装 Release 二进制和完整 skill；它会校验 ELF64/AArch64、六个 references、`master.key` 32 字节以及配置和目录。只有所有检查通过才会写入版本完成标记。",
-      "versionCode": 7,
-      "updateTimeMillis": 1789269865407,
+      "versionCode": 9,
+      "updateTimeMillis": 1789280560947,
       "author": "snowzlmbot",
       "tags": [],
       "requireMinShortXProtoVersion": 0
@@ -114,9 +114,9 @@
       "id": "DA-ai-web-engine-start-001",
       "fileUrl": "ShortX-启动AI指令生成.txt",
       "title": "启动 AI Web 引擎",
-      "description": "从云端拉取 start.sh，将 ShortX 环境变量 模型key 注入 AI_WEB_ENGINE_API_KEY，启动 127.0.0.1:6688 引擎并执行健康检查。",
-      "versionCode": 7,
-      "updateTimeMillis": 1789269865407,
+      "description": "从云端拉取 start.sh，将 ShortX 环境变量 模型key 注入 AI_WEB_ENGINE_API_KEY，启动 127.0.0.1:6688 引擎并执行健康检查。发现旧版本引擎时会先安全升级。",
+      "versionCode": 9,
+      "updateTimeMillis": 1789280560947,
       "author": "snowzlmbot",
       "tags": [],
       "requireMinShortXProtoVersion": 0
@@ -137,8 +137,8 @@
       "fileUrl": "ShortX-结束AI指令生成.txt",
       "title": "结束 AI Web 引擎",
       "description": "只停止本指令启动且 PID/executable 校验一致的 ai-web-engine，不使用宽泛 pkill，保留配置与会话。",
-      "versionCode": 6,
-      "updateTimeMillis": 1789269865407,
+      "versionCode": 8,
+      "updateTimeMillis": 1789280560947,
       "author": "snowzlmbot",
       "tags": [],
       "requireMinShortXProtoVersion": 0
@@ -831,5 +831,5 @@
       "requireMinShortXProtoVersion": 0
     }
   ],
-  "updateTimeMillis": 1789269865407
+  "updateTimeMillis": 1789280560947
 }
