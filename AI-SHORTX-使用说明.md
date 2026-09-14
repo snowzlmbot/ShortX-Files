@@ -61,9 +61,9 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/rollback
 ## 远端资源
 
 - 仓库：<https://github.com/snowzlmbot/ai-web-engine>
-- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.1.2>
-- 全架构引擎包：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.1.2/ai-web-engine-android-all.zip>
-- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.1.2/ai-web-engine-android-arm64>
+- Release：<https://github.com/snowzlmbot/ai-web-engine/releases/tag/v1.2.2>
+- 全架构引擎包：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.2.2/ai-web-engine-android-all.zip>
+- ARM64 二进制：<https://github.com/snowzlmbot/ai-web-engine/releases/download/v1.2.2/ai-web-engine-android-arm64>
 - 适配 skill：<https://raw.githubusercontent.com/snowzlmbot/ShortX-Files/main/skills/shortx-rule-creator.zip>
 
 ## 说明
