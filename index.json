@@ -78,6 +78,17 @@
       "requireMinShortXProtoVersion": 0
     },
     {
+      "id": "DA-ai-web-engine-rollback-001",
+      "fileUrl": "ShortX-回退AI Web引擎到上一个版本.txt",
+      "title": "回退 AI Web 引擎到上一个版本",
+      "description": "仅允许从当前最新正式 Release 回退到紧邻的上一个正式 Release；自动按 Android ABI 选择资产，校验 SHA256、ELF 和健康状态，失败自动恢复当前版本，并保留配置、Key、会话、skills 与日志。",
+      "versionCode": 1,
+      "updateTimeMillis": 1789478400000,
+      "author": "snowzlmbot",
+      "tags": [],
+      "requireMinShortXProtoVersion": 0
+    },
+    {
       "id": "SHARED-DA-39c10e54-a82c-4da0-bc20-5baa00d24f37",
       "fileUrl": "ShortX-小米步数管理3.txt",
       "title": "小米步数管理3",
@@ -228,17 +239,6 @@
       "versionCode": 0,
       "updateTimeMillis": 1689729628120,
       "author": "鸿鹄",
-      "tags": [],
-      "requireMinShortXProtoVersion": 0
-    },
-    {
-      "id": "DA-ai-web-engine-rollback-001",
-      "fileUrl": "ShortX-回退AI Web引擎到上一个版本.txt",
-      "title": "回退 AI Web 引擎到上一个版本",
-      "description": "仅允许从当前最新正式 Release 回退到紧邻的上一个正式 Release；自动按 Android ABI 选择资产，校验 SHA256、ELF 和健康状态，失败自动恢复当前版本，并保留配置、Key、会话、skills 与日志。",
-      "versionCode": 1,
-      "updateTimeMillis": 1789478400000,
-      "author": "snowzlmbot",
       "tags": [],
       "requireMinShortXProtoVersion": 0
     }
@@ -842,5 +842,5 @@
       "requireMinShortXProtoVersion": 0
     }
   ],
-  "updateTimeMillis": 1789304951265
+  "updateTimeMillis": 1789478400000
 }
