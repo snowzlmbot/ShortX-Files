@@ -2,13 +2,14 @@
 
 本目录已移除旧版“ShortX AI 回合制会话”三份原生规则。现在统一使用 `ai-web-engine` 提供的本地 Web 引擎，ShortX 只负责从云端拉取最新脚本并执行。
 
-## 最新三条指令
+## 最新四条指令
 
 - `da/ShortX-AI生成指令首次环境初始化.txt`
 - `da/ShortX-启动AI指令生成.txt`
 - `da/ShortX-结束AI指令生成.txt`
+- `da/ShortX-回退AI Web引擎到上一个版本.txt`
 
-三条指令的源代码位于公开仓库：
+四条指令的源代码位于公开仓库：
 
 - <https://github.com/snowzlmbot/ai-web-engine/tree/main/shortx>
 
@@ -18,6 +19,7 @@
 https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/init.sh
 https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/start.sh
 https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
+https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/rollback.sh
 ```
 
 ## 使用顺序
@@ -40,6 +42,7 @@ https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh
    首次打开如果右上角显示“需要配置”，这是正常的首次配置状态，不是连接失败。页面会自动打开“模型服务设置”。填写服务商、HTTPS 端点、协议、默认模型 ID 和模型列表后，点击“保存并连接”；状态变为“已连接”后，底部输入框和“发送”按钮会启用。
 
 6. 使用 `ShortX-结束AI指令生成.txt` 停止引擎。停止脚本只操作自身 PID 文件对应的引擎进程，不使用宽泛 `pkill -f`，也不删除配置、密钥、会话、skills 或日志。
+7. 只有需要回退时才使用 `ShortX-回退AI Web引擎到上一个版本.txt`。它只允许回退到紧邻的上一个正式 Release，不能指定任意版本；回退失败会恢复当前版本。
 
 使用 `http://127.0.0.1:6688`，因为 Chromium/Chrome 会将 `6666` 判定为危险端口并返回 `ERR_UNSAFE_PORT`。
 
