@@ -2,21 +2,21 @@
   "actions": [
     {
       "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\ntmp=\"$BASE/scripts/rollback.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine-runtime/main/runtime-assets/ai-web-engine-script-rollback-$suffix?shortx_rollback=$(date +%s)-$$\"\nrm -f \"$tmp\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && chmod 755 \"$tmp\" && [ \"$(od -An -tx1 -N4 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = 7f454c46 ] && [ \"$(od -An -tx1 -j4 -N1 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$cls\" ] && [ \"$(od -An -tx1 -j18 -N2 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$machine\" ] && mv \"$tmp\" \"$BASE/scripts/rollback.sh\"; then\n  exec \"$BASE/scripts/rollback.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] rollback 加密执行容器下载或 ELF 校验失败'\n  exit 1\nfi",
+      "command": "set -eu\nBASE=${AI_WEB_ENGINE_BASE:-/data/local/ai-instruction}\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\nLOCAL_VERSION=$(sed -n 's/.*\"version\"[[:space:]]*:[[:space:]]*\"\\([0-9][0-9A-Za-z._-]*\\)\".*/\\1/p' \"$BASE/config/version.json\" 2>/dev/null || true)\ninstalled_bundle_valid() {\n  [ -n \"$LOCAL_VERSION\" ] && [ -x \"$BASE/bin/ai-web-engine\" ] && [ -x \"$BASE/scripts/rollback.sh\" ] || return 1\n  [ -s \"$BASE/scripts/manifest.json\" ] && [ -s \"$BASE/scripts/manifest.sig\" ] && [ -s \"$BASE/scripts/manifest.pub\" ] || return 1\n  \"$BASE/bin/ai-web-engine\" verify-scripts --manifest \"$BASE/scripts/manifest.json\" --signature \"$BASE/scripts/manifest.sig\" --public-key \"$BASE/scripts/manifest.pub\" --scripts-dir \"$BASE/scripts\" --version \"$LOCAL_VERSION\" >/dev/null 2>&1\n}\nif installed_bundle_valid; then\n  export AI_WEB_ENGINE_VERIFIED_ENTRY=1\n  exec \"$BASE/scripts/rollback.sh\"\nfi\nprintf '%s\\n' '[ERROR] 本地完整性校验失败；请先运行首次环境初始化修复，不执行未验证的 rollback 文件'\nexit 1",
       "singleShot": true,
       "actionOnError": "Break",
       "id": "A-shortx-rollback"
     }
   ],
   "id": "DA-ai-web-engine-rollback-001",
-  "lastUpdateTime": "1789516800000",
+  "lastUpdateTime": "1789554542598",
   "createTime": "0",
   "author": {
     "name": "snowzlmbot"
   },
   "title": "回退 AI Web 引擎到上一个版本",
-  "description": "按 ABI 下载并执行加密 ELF 回退容器，仅在签名、SHA-256、ELF 和健康检查全部通过时切换到上一正式版本。",
-  "versionCode": "2",
+  "description": "校验并复用已安装的签名回退容器，不重复下载；仅损坏时拒绝操作并提示初始化修复。",
+  "versionCode": "3",
   "hook": {},
   "quit": {},
   "parameters": []
