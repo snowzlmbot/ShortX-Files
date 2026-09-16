@@ -2,21 +2,21 @@
   "actions": [
     {
       "@type": "type.googleapis.com/ShellCommand",
-      "command": "set -eu\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\ntmp=\"$BASE/scripts/init.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine-runtime/main/runtime-assets/ai-web-engine-script-init-$suffix?shortx_init=$(date +%s)-$$\"\nrm -f \"$tmp\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && chmod 755 \"$tmp\" && [ \"$(od -An -tx1 -N4 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = 7f454c46 ] && [ \"$(od -An -tx1 -j4 -N1 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$cls\" ] && [ \"$(od -An -tx1 -j18 -N2 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$machine\" ] && mv \"$tmp\" \"$BASE/scripts/init.sh\"; then\n  exec \"$BASE/scripts/init.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] init 加密执行容器下载或 ELF 校验失败'\n  exit 1\nfi",
+      "command": "set -eu\nBASE=${AI_WEB_ENGINE_BASE:-/data/local/ai-instruction}\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\nLOCAL_VERSION=$(sed -n 's/.*\"version\"[[:space:]]*:[[:space:]]*\"\\([0-9][0-9A-Za-z._-]*\\)\".*/\\1/p' \"$BASE/config/version.json\" 2>/dev/null || true)\ninstalled_bundle_valid() {\n  [ -n \"$LOCAL_VERSION\" ] && [ -x \"$BASE/bin/ai-web-engine\" ] && [ -x \"$BASE/scripts/init.sh\" ] || return 1\n  [ -s \"$BASE/scripts/manifest.json\" ] && [ -s \"$BASE/scripts/manifest.sig\" ] && [ -s \"$BASE/scripts/manifest.pub\" ] || return 1\n  \"$BASE/bin/ai-web-engine\" verify-scripts --manifest \"$BASE/scripts/manifest.json\" --signature \"$BASE/scripts/manifest.sig\" --public-key \"$BASE/scripts/manifest.pub\" --scripts-dir \"$BASE/scripts\" --version \"$LOCAL_VERSION\" >/dev/null 2>&1\n}\nif installed_bundle_valid; then\n  export AI_WEB_ENGINE_VERIFIED_ENTRY=1\n  exec \"$BASE/scripts/init.sh\"\nfi\n# Only an absent/corrupt installation enters this full-download repair path.\nversion=$(curl -fsSL --retry 2 --connect-timeout 15 --max-time 30 \"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine-runtime/main/runtime-assets/version.json?bootstrap=$(date +%s)-$$\" | sed -n 's/.*\"version\"[[:space:]]*:[[:space:]]*\"\\([0-9][0-9A-Za-z._-]*\\)\".*/\\1/p')\n[ -n \"$version\" ] || { printf '%s\\n' '[ERROR] 无法读取发行版本'; exit 1; }\nasset=\"ai-web-engine-script-init-$suffix\"\nsums=\"$BASE/scripts/.bootstrap-sums-$$\"\ntmp=\"$BASE/scripts/.bootstrap-init-$$\"\ntrap 'rm -f \"$tmp\" \"$sums\"' EXIT HUP INT TERM\nrelease=\"https://github.com/snowzlmbot/ai-web-engine-runtime/releases/download/v$version\"\ncurl -fsSL --retry 2 --connect-timeout 15 --max-time 60 \"$release/SHA256SUMS\" -o \"$sums\"\ncurl -fsSL --retry 2 --connect-timeout 15 --max-time 180 \"$release/$asset\" -o \"$tmp\"\nchmod 700 \"$tmp\"\nexpected=$(sed -n \"s/^\\([0-9A-Fa-f]\\{64\\}\\)[[:space:]][[:space:]]*$asset$/\\1/p\" \"$sums\")\nactual=$(sha256sum \"$tmp\")\nactual=${actual%% *}\n[ -n \"$expected\" ] && [ \"$actual\" = \"$expected\" ] || { printf '%s\\n' '[ERROR] 初始化容器 SHA-256 不匹配'; exit 1; }\n[ \"$(od -An -tx1 -N4 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = 7f454c46 ] &&\n[ \"$(od -An -tx1 -j4 -N1 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$cls\" ] &&\n[ \"$(od -An -tx1 -j18 -N2 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$machine\" ] || { printf '%s\\n' '[ERROR] 初始化容器 ABI/ELF 不匹配'; exit 1; }\nAI_WEB_ENGINE_FORCE_UPDATE=1 \"$tmp\" || { printf '%s\\n' '[ERROR] 环境修复失败，未运行未验证的脚本'; exit 1; }\nrm -f \"$tmp\" \"$sums\"\ntrap - EXIT HUP INT TERM\nprintf '%s\\n' '[DONE] 环境已修复'",
       "singleShot": true,
       "actionOnError": "Break",
       "id": "A-shortx-init"
     }
   ],
   "id": "DA-ai-web-engine-init-001",
-  "lastUpdateTime": "1789516800000",
+  "lastUpdateTime": "1789554542598",
   "createTime": "0",
   "author": {
     "name": "snowzlmbot"
   },
   "title": "AI Web 引擎首次环境初始化",
-  "description": "按 Android ABI 下载并直接执行 AES-256-GCM 加密的 ELF 初始化容器；公开仓库不分发明文脚本或源码。",
-  "versionCode": "15",
+  "description": "按 Android ABI 校验并复用已安装签名容器；仅首次安装或本地损坏时下载并修复完整运行资产。",
+  "versionCode": "16",
   "hook": {},
   "quit": {},
   "parameters": []
