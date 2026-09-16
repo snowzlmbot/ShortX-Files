@@ -1,12 +1,25 @@
 {
-  "actions": [{
-    "@type": "type.googleapis.com/ShellCommand",
-    "command": "set -u\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ntmp=\"$BASE/scripts/start.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/start.sh?shortx_start=$(date +%s)-$$\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && [ -s \"$tmp\" ] && grep -q 'PORT=6688' \"$tmp\" && grep -q 'android.intent.action.VIEW' \"$tmp\" && sh -n \"$tmp\" && chmod 755 \"$tmp\" && mv \"$tmp\" \"$BASE/scripts/start.sh\"; then\n  export AI_WEB_ENGINE_API_KEY=\"%模型key%\"\n  exec \"$BASE/scripts/start.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] start.sh 下载到的不是有效最新脚本，已拒绝执行'\n  exit 1\nfi",
-    "singleShot": true,
-    "actionOnError": "Break",
-    "id": "A-shortx-start"
-  }],
-  "id":"DA-ai-web-engine-start-001","lastUpdateTime":"1789304951265","createTime":"0","author":{"name":"snowzlmbot"},"title":"启动 AI Web 引擎","description":"从云端拉取 start.sh，将 ShortX 环境变量 模型key 注入 AI_WEB_ENGINE_API_KEY，启动 127.0.0.1:6688 引擎并执行健康检查；发现旧版本引擎时会先安全升级。","versionCode":"14","hook":{},"quit":{},"parameters":[]
+  "actions": [
+    {
+      "@type": "type.googleapis.com/ShellCommand",
+      "command": "set -eu\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\ntmp=\"$BASE/scripts/start.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine-runtime/main/runtime-assets/ai-web-engine-script-start-$suffix?shortx_start=$(date +%s)-$$\"\nrm -f \"$tmp\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && chmod 755 \"$tmp\" && [ \"$(od -An -tx1 -N4 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = 7f454c46 ] && [ \"$(od -An -tx1 -j4 -N1 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$cls\" ] && [ \"$(od -An -tx1 -j18 -N2 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$machine\" ] && mv \"$tmp\" \"$BASE/scripts/start.sh\"; then\n  export AI_WEB_ENGINE_API_KEY=\"%模型key%\"\n  exec \"$BASE/scripts/start.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] start 加密执行容器下载或 ELF 校验失败'\n  exit 1\nfi",
+      "singleShot": true,
+      "actionOnError": "Break",
+      "id": "A-shortx-start"
+    }
+  ],
+  "id": "DA-ai-web-engine-start-001",
+  "lastUpdateTime": "1789516800000",
+  "createTime": "0",
+  "author": {
+    "name": "snowzlmbot"
+  },
+  "title": "启动 AI Web 引擎",
+  "description": "按 ABI 下载并执行加密 ELF 启动容器，注入 ShortX 模型 Key 后启动 127.0.0.1:6688。",
+  "versionCode": "15",
+  "hook": {},
+  "quit": {},
+  "parameters": []
 }
 ###------###
-{"type":"da"}
+{"type": "da"}

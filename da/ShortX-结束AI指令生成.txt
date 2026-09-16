@@ -1,12 +1,25 @@
 {
-  "actions": [{
-    "@type": "type.googleapis.com/ShellCommand",
-    "command": "set -u\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ntmp=\"$BASE/scripts/stop.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine/main/scripts/stop.sh?shortx_stop=$(date +%s)-$$\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && [ -s \"$tmp\" ] && grep -q 'ai-web-engine' \"$tmp\" && grep -q 'PIDFILE' \"$tmp\" && sh -n \"$tmp\" && chmod 755 \"$tmp\" && mv \"$tmp\" \"$BASE/scripts/stop.sh\"; then\n  exec \"$BASE/scripts/stop.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] stop.sh 下载到的不是有效最新脚本，已拒绝执行'\n  exit 1\nfi",
-    "singleShot": true,
-    "actionOnError": "Continue",
-    "id": "A-shortx-stop"
-  }],
-  "id":"DA-ai-web-engine-stop-001","lastUpdateTime":"1789304951265","createTime":"0","author":{"name":"snowzlmbot"},"title":"结束 AI Web 引擎","description":"只停止本指令启动且 PID/executable 校验一致的 ai-web-engine，不使用宽泛 pkill，保留配置与会话。","versionCode":"13","hook":{},"quit":{},"parameters":[]
+  "actions": [
+    {
+      "@type": "type.googleapis.com/ShellCommand",
+      "command": "set -eu\nBASE=/data/local/ai-instruction\nmkdir -p \"$BASE/scripts\"\ncase \"$(uname -m)\" in\n  aarch64|arm64) suffix=android-arm64; cls=02; machine=b700 ;;\n  armv7l|armv8l|arm) suffix=android-armv7; cls=01; machine=2800 ;;\n  x86_64|amd64) suffix=android-x86_64; cls=02; machine=3e00 ;;\n  i386|i486|i586|i686|x86) suffix=android-x86; cls=01; machine=0300 ;;\n  *) printf '%s\\n' '[ERROR] 不支持的 Android ABI'; exit 1 ;;\nesac\ntmp=\"$BASE/scripts/stop.sh.new\"\nurl=\"https://raw.githubusercontent.com/snowzlmbot/ai-web-engine-runtime/main/runtime-assets/ai-web-engine-script-stop-$suffix?shortx_stop=$(date +%s)-$$\"\nrm -f \"$tmp\"\nif curl -fsSL --retry 2 --connect-timeout 15 \"$url\" -o \"$tmp\" && chmod 755 \"$tmp\" && [ \"$(od -An -tx1 -N4 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = 7f454c46 ] && [ \"$(od -An -tx1 -j4 -N1 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$cls\" ] && [ \"$(od -An -tx1 -j18 -N2 \"$tmp\" 2>/dev/null | tr -d ' \\n\\t')\" = \"$machine\" ] && mv \"$tmp\" \"$BASE/scripts/stop.sh\"; then\n  exec \"$BASE/scripts/stop.sh\"\nelse\n  rm -f \"$tmp\"\n  printf '%s\\n' '[ERROR] stop 加密执行容器下载或 ELF 校验失败'\n  exit 1\nfi",
+      "singleShot": true,
+      "actionOnError": "Continue",
+      "id": "A-shortx-stop"
+    }
+  ],
+  "id": "DA-ai-web-engine-stop-001",
+  "lastUpdateTime": "1789516800000",
+  "createTime": "0",
+  "author": {
+    "name": "snowzlmbot"
+  },
+  "title": "结束 AI Web 引擎",
+  "description": "按 ABI 下载并执行加密 ELF 停止容器，仅停止 PID 与可执行文件匹配的 AI Web Engine。",
+  "versionCode": "14",
+  "hook": {},
+  "quit": {},
+  "parameters": []
 }
 ###------###
-{"type":"da"}
+{"type": "da"}
